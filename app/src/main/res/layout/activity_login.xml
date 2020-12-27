@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:tag="layout/activity_login_0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:weightSum="15">
+
+            <RelativeLayout
+                android:id="@+id/body_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="13"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="center"
+                    android:transitionName="background_transition"
+                    app:srcCompat="@drawable/app_background" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginEnd="40dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/app_logo"
+                        android:transitionName="logo_transition" />
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/userEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/edittext_background"
+                        android:drawableStart="@drawable/ic_account"
+                        android:drawablePadding="10dp"
+                        android:hint="@string/email"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:hintEnabled="false"
+                        app:passwordToggleEnabled="true">
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/userPass"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/edittext_background"
+                            android:drawableStart="@drawable/ic_password"
+                            android:drawablePadding="10dp"
+                            android:hint="@string/password"
+                            android:inputType="textPassword"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:id="@+id/ForgetPassword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="?attr/selectableItemBackground"
+                            android:padding="5dp"
+                            android:text="@string/forgot_password"
+                            android:textColor="@color/white" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="20">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="12" />
+
+                        <Button
+                            android:id="@+id/SignIn"
+                            android:layout_width="0dp"
+                            android:layout_height="45dp"
+                            android:layout_weight="8"
+                            android:background="@drawable/btn_gradient_background"
+                            android:drawableEnd="@drawable/ic_go"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:text="@string/sign_in"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/signup_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/SignUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="10dp"
+                        android:text="Sign up as a new driver"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>

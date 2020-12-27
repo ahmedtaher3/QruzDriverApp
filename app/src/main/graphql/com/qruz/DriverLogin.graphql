@@ -1,0 +1,27 @@
+mutation DriverLogin ($email: String! ,$password: String!, $platform:String! , $device_id:String! ){
+
+    driverLogin(input:{
+        emailOrPhone: $email
+        password: $password
+        platform: $platform
+        device_id: $device_id
+    }) {
+        access_token
+        driver {
+            id
+            name
+            email
+            phone
+             license_expires_on
+            avatar
+            fleet {
+                id
+                name
+            }
+            vehicles {
+                id
+                license_plate
+            }
+        }
+    }
+}

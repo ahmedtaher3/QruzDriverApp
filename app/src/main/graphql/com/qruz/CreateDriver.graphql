@@ -1,0 +1,12 @@
+mutation CreateDriver ($name: String! ,$phone: String! ,$city: String! ,$vehicle: String!){
+
+       createDriver(input:{
+             name: $name
+             phone: $phone
+             city: $city
+             vehicle: $vehicle
+         }) {
+             id
+         }
+
+}

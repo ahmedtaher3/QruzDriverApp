@@ -1,0 +1,13 @@
+query chatMessages ($log_id:String!) {
+  chatMessages(trip_id: $log_id, trip_type: "App\\BusinessTrip") {
+    id
+    message
+    created_at
+    time
+    sender {
+      id
+      name
+    }
+    sender_type
+  }
+}

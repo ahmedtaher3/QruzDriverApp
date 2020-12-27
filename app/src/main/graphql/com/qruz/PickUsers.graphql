@@ -1,0 +1,10 @@
+mutation  PickUsers ($trip_id: ID! , $log_id: String!, $latitude: String!, $longitude: String!, $users: [ID!]! ) {
+
+    pickUsers(input:{
+        trip_id: $trip_id
+        log_id: $log_id
+        latitude: $latitude
+        longitude: $longitude
+        users: $users
+    })
+}

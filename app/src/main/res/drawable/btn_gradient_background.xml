@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <layer-list>
+            <!-- BUTTON alttan gölge
+              android:right="5px" to make it round-->
+            <item
+                >
+                <shape>
+                    <gradient
+                        android:endColor="@color/colorPrimary"
+                        android:startColor="@color/colorPrimaryDark" />
+                    <corners
+                        android:radius="25dp"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:state_pressed="true">
+        <layer-list>
+
+
+            <!-- BUTTON -->
+            <item >
+                <shape>
+                    <gradient
+                        android:startColor="@color/colorPrimaryDark"
+                        android:endColor="@color/colorPrimaryDark" />
+                    <corners
+                        android:radius="25dp"/>
+
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

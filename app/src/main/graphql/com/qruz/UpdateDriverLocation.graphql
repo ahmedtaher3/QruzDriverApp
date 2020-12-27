@@ -1,0 +1,10 @@
+mutation UpdateDriverLocation ($trip_id: ID! ,$driver_id: String! ,$latitude: String! ,$longitude: String! ){
+
+    updateDriverLocation(input:{
+        trip_id: $trip_id
+        driver_id: $driver_id
+        latitude: $latitude
+        longitude: $longitude
+    })
+
+}

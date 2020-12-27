@@ -1,0 +1,11 @@
+mutation UpdateDriver ($id: ID! ,$name: String! ,$phone: String! ,$email: String!){
+     updateDriver(input:{
+       id: $id
+       name: $name
+       phone: $phone
+       email: $email
+     }){
+       id
+       name
+     }
+}

@@ -1,0 +1,31 @@
+query DriverTrips($id: ID!,  $day: String){
+
+    driverTrips(driver_id: $id,  day: $day) {
+
+        id
+        name
+        dayName
+        date
+        startsAt
+        flag
+        isReturn
+        partner
+        {
+            id
+            name
+            logo
+        }
+
+          stations {
+                    id
+
+                    users {
+                        id
+
+                    }
+                }
+
+
+    }
+
+}

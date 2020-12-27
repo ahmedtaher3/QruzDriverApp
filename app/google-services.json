@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "386243592422",
+    "firebase_url": "https://qruz-7dda9.firebaseio.com",
+    "project_id": "qruz-7dda9",
+    "storage_bucket": "qruz-7dda9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386243592422:android:a4d053693b8b3a7e81fb27",
+        "android_client_info": {
+          "package_name": "com.qruz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386243592422-tg5efjus5imarpo2dv0rtm1afh10g5eb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuz3gE6MicprQAzbXRdeoWe71oVD9gvyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386243592422-tg5efjus5imarpo2dv0rtm1afh10g5eb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "386243592422-qo3d82ep32f0vnq7pv94i1no8pu29sbp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "VolaAgency.Qruz"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386243592422:android:0e520a47001fd0bb81fb27",
+        "android_client_info": {
+          "package_name": "qruz.t.qruzdriverapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386243592422-tg5efjus5imarpo2dv0rtm1afh10g5eb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuz3gE6MicprQAzbXRdeoWe71oVD9gvyk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386243592422-tg5efjus5imarpo2dv0rtm1afh10g5eb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "386243592422-qo3d82ep32f0vnq7pv94i1no8pu29sbp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "VolaAgency.Qruz"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

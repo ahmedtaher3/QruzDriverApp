@@ -1,0 +1,7 @@
+mutation NearYou ($station_id: ID! ){
+
+    nearYou(input:{
+        station_id: $station_id
+    })
+
+}

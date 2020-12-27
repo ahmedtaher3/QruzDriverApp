@@ -1,0 +1,14 @@
+query BusinessTripSubscribers ($trip_id: ID, $station_id: ID, $status: String! ){
+
+    businessTripSubscribers(trip_id: $trip_id , station_id : $station_id , status :$status) {
+
+        id
+        name
+        email
+        phone
+        avatar
+        is_picked_up
+        is_arrived
+    }
+
+}

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    android:orientation="vertical"
+    android:tag="layout/station_dialog_0"
+    app:cardCornerRadius="25dp"
+    app:cardElevation="5dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/stationSendNotification"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/btn_gradient_background"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/send_notification"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/pickUsersButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_background"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/pick_up"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/DropUsersButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_background"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/drop_off"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stationRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/done" />
+
+            <ProgressBar
+                android:id="@+id/stationProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+
+            <RelativeLayout
+                android:id="@+id/done"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:padding="10dp">
+
+                <Button
+                    android:id="@+id/stationDone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/btn_gradient_background"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/pick_up"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

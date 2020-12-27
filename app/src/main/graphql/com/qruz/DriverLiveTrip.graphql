@@ -1,0 +1,10 @@
+query  DriverLiveTrip($id: ID!){
+
+    driverLiveTrip(driver_id: $id) {
+        status
+        tripType
+        tripID
+
+    }
+
+}

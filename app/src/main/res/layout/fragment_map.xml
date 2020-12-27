@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag="layout/fragment_map_0">
+
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:mapbox_renderTextureMode="true" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/startTripCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="#fff"
+                    app:cardCornerRadius="25dp"
+                    app:cardElevation="5dp"
+                    app:cardPreventCornerOverlap="true"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/screens_background"
+                        android:orientation="vertical"
+                        android:paddingBottom="20dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_margin="10dp"
+                            app:cardCornerRadius="25dp"
+                            app:cardElevation="0dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:padding="10dp">
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/logo"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:src="@drawable/partner" />
+
+                                <TextView
+                                    android:id="@+id/name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/blue_color"
+                                    android:textSize="20dp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="@string/start_time"
+                                    android:textColor="@color/blue_color" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="  : "
+                                    android:textColor="@color/blue_color" />
+                            </LinearLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/startsAt"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="1dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@color/edittext_hintColor" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="@string/start_station"
+                                    android:textColor="@color/blue_color" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text=" : "
+                                    android:textColor="@color/blue_color" />
+                            </LinearLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/startStation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="100dp"
+                            android:layout_height="1dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@color/edittext_hintColor" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="@string/total_seats"
+                                    android:textColor="@color/blue_color" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:text="  : "
+                                    android:textColor="@color/blue_color" />
+                            </LinearLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1">
+
+                                <TextView
+                                    android:id="@+id/userCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp" />
+                            </RelativeLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </FrameLayout>
+
+            <Button
+                android:id="@+id/startTrip"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|center_vertical|center_horizontal|center"
+                android:background="@drawable/btn_gradient_background"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/start_trip"
+                android:textColor="@color/white" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <RelativeLayout
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="150dp"
+            app:layout_behavior="@string/bottom_sheet_behavior">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="-40dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="visible"
+                    app:behavior_hideable="true"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="7dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginBottom="65dp"
+                        android:background="@color/transparent"
+                        android:orientation="vertical"
+                        android:paddingStart="30dp"
+                        android:paddingEnd="30dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:text="@string/trip_details"
+                                    android:textColor="@color/blue_color"
+                                    android:textSize="18dp" />
+                            </LinearLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/stations"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_above="@+id/bottomLayout" />
+
+                                <LinearLayout
+                                    android:id="@+id/bottomLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:padding="5dp"
+                                    android:weightSum="2">
+
+                                    <Button
+                                        android:id="@+id/endTrip"
+                                        android:layout_width="0dp"
+                                        android:layout_height="40dp"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_marginRight="10dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/btn_gradient_background"
+                                        android:paddingStart="15dp"
+                                        android:paddingEnd="15dp"
+                                        android:text="@string/end_trip"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/white" />
+
+                                    <Button
+                                        android:id="@+id/passengersButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="40dp"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginLeft="10dp"
+                                        android:layout_marginRight="10dp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/btn_gradient_background"
+                                        android:paddingStart="15dp"
+                                        android:paddingEnd="15dp"
+                                        android:text="@string/passengers"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/white"
+                                        android:visibility="visible" />
+                                </LinearLayout>
+                            </RelativeLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </FrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="8dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/curved_grey" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/my_location"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    app:backgroundTint="@color/white"
+                    app:elevation="4dp"
+                    app:fabCustomSize="50dp"
+                    app:maxImageSize="35dp"
+                    app:srcCompat="@drawable/ic_my_location" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/zoom_route"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    app:backgroundTint="@color/white"
+                    app:elevation="4dp"
+                    app:fabCustomSize="50dp"
+                    app:maxImageSize="35dp"
+                    app:srcCompat="@drawable/ic_directions" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="30dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/navigation"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    app:backgroundTint="@color/white"
+                    app:elevation="4dp"
+                    app:fabCustomSize="50dp"
+                    app:maxImageSize="35dp"
+                    app:srcCompat="@drawable/ic_navigation_black_24dp" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/openChat"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    app:backgroundTint="@color/white"
+                    app:elevation="4dp"
+                    app:fabCustomSize="50dp"
+                    app:maxImageSize="35dp"
+                    app:srcCompat="@drawable/ic_chat_processing_black_24dp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
