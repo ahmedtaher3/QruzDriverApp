@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
 
-        <TextView
+         <TextView
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -54,7 +55,8 @@
             android:layout_marginEnd="10dp"
             android:layout_weight="1">
 
-            <Button
+             <Button
+                android:textStyle="bold"
                 android:id="@+id/cancel_btn"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -73,7 +75,8 @@
             android:layout_marginEnd="10dp"
             android:layout_weight="1">
 
-            <Button
+             <Button
+                android:textStyle="bold"
                 android:id="@+id/submit_btn"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"

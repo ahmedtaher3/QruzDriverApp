@@ -5,7 +5,9 @@ mutation UpdateDriver ($id: ID! ,$name: String! ,$phone: String! ,$email: String
        phone: $phone
        email: $email
      }){
-       id
-       name
+         id
+         name
+         email
+         phone
      }
 }

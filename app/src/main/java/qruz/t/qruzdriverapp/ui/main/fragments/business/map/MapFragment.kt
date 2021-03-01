@@ -11,14 +11,18 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.NonNull
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -27,48 +31,46 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.*
 import com.google.firebase.crashlytics.internal.common.AbstractSpiCall
-import com.mapbox.android.core.permissions.PermissionsListener
-import com.mapbox.android.core.permissions.PermissionsManager
-import com.mapbox.api.directions.v5.DirectionsCriteria
-import com.mapbox.api.directions.v5.models.DirectionsResponse
-import com.mapbox.api.directions.v5.models.DirectionsRoute
-import com.mapbox.geojson.Point
-import com.mapbox.mapboxsdk.annotations.Marker
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
-import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.geometry.LatLngBounds
-import com.mapbox.mapboxsdk.location.LocationComponent
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
-import com.mapbox.mapboxsdk.location.modes.CameraMode
-import com.mapbox.mapboxsdk.location.modes.RenderMode
-import com.mapbox.mapboxsdk.maps.MapboxMap
-import com.mapbox.mapboxsdk.maps.Style
-import com.mapbox.mapboxsdk.maps.Style.OnStyleLoaded
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute
 import com.orhanobut.logger.Logger
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
 import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
-import com.pusher.client.connection.ConnectionEventListener
-import com.pusher.client.connection.ConnectionState
-import com.pusher.client.connection.ConnectionStateChange
 import com.pusher.client.util.HttpAuthorizer
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import mumayank.com.airlocationlibrary.AirLocation
+import org.json.JSONObject
+import qruz.t.qruzdriverapp.Helper.DataParser
 import qruz.t.qruzdriverapp.R
 import qruz.t.qruzdriverapp.Utilities.CommonUtilities
+import qruz.t.qruzdriverapp.Utilities.CommonUtilities.bitmapDescriptorFromVector
 import qruz.t.qruzdriverapp.base.BaseFragment
 import qruz.t.qruzdriverapp.databinding.FragmentMapBinding
 import qruz.t.qruzdriverapp.model.Station
+import qruz.t.qruzdriverapp.model.StationUser
+import qruz.t.qruzdriverapp.ui.dialogs.attandance.AttandanceDialog
 import qruz.t.qruzdriverapp.ui.dialogs.chat.ChatDialog
+import qruz.t.qruzdriverapp.ui.dialogs.chat.DirectChatDialog
+import qruz.t.qruzdriverapp.ui.dialogs.startion.PhonesDialog
 import qruz.t.qruzdriverapp.ui.dialogs.startion.StationDialog
+import qruz.t.qruzdriverapp.ui.dialogs.startion.StationInterface
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -80,8 +82,6 @@ private const val ARG_TRIP_ID = "tripId"
 private const val ARG_STATUS = "status"
 
 
-var permissionsManager: PermissionsManager? = null
-
 /**
  * A simple [Fragment] subclass.
  * Use the [MapFragment.newInstance] factory method to
@@ -89,33 +89,46 @@ var permissionsManager: PermissionsManager? = null
  */
 
 
-class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
-    PermissionsListener, MapboxMap.OnMarkerClickListener {
+class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, OnMapReadyCallback,
+    StationsAdapter.OnStationClick, StationInterface {
 
     var startAt = ""
     var tripId = "0"
     var status = false
+    var counter = 0
+    private lateinit var airLocation: AirLocation
+
+
+    var disposable: Disposable? = null
+
 
     lateinit var binding: FragmentMapBinding
     private lateinit var viewModel: MapViewModel
 
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
     private val INTERVAL: Long = 7000
-    private val FASTEST_INTERVAL: Long = 1000
+    private val FASTEST_INTERVAL: Long = 7000
     private var mLastLocation: Location? = null
     internal lateinit var mLocationRequest: LocationRequest
     private val REQUEST_PERMISSION_LOCATION = 10
     private var ch: PrivateChannel? = null
-    val bounds = LatLngBounds.Builder()
-    var route: DirectionsRoute? = null
+    var points: LatLngBounds.Builder? = null
+    var mMap: GoogleMap? = null
+    var mapFragment: SupportMapFragment? = null
+    var latLngs: ArrayList<LatLng>? = null
+    var origin: LatLng? = null
+    var destination: LatLng? = null
+    var latLngsWayPoints: ArrayList<LatLng>? = null
 
-    private var map_boxMap: MapboxMap? = null
-    private var navigationMapRoute: NavigationMapRoute? = null
-    private var stationsPoints: ArrayList<Point>? = null
+
+    var adapter: StationsAdapter? = null
+
+
+    var group_chat = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        baseActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         arguments?.let {
             status = it.getBoolean(ARG_STATUS)
             startAt = it.getString(ARG_START_AT).toString()
@@ -123,8 +136,9 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
 
         }
+        latLngs = ArrayList()
+        latLngsWayPoints = ArrayList()
         viewModel = ViewModelProviders.of(this).get(MapViewModel::class.java)
-        stationsPoints = ArrayList()
         mLocationRequest = LocationRequest()
 
         val locationManager =
@@ -132,6 +146,124 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps()
         }
+
+
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding = viewDataBinding
+
+
+        Observable.interval(0, 1, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : io.reactivex.Observer<Long> {
+                override fun onSubscribe(d: Disposable) {
+                    disposable = d
+                }
+
+                override fun onNext(aLong: Long) {
+
+
+                    counter = counter + 1
+
+                }
+
+                override fun onError(e: Throwable) {}
+                override fun onComplete() {}
+            })
+
+
+
+        if (mMap == null) {
+            val fm = childFragmentManager
+            mapFragment = fm.findFragmentById(R.id.map) as SupportMapFragment?
+            mapFragment?.getMapAsync(this)
+        }
+
+
+
+
+
+        if (viewModel.dataManager.isTripLive) {
+
+            binding.startTripCardView.visibility = View.GONE
+            binding.bottomSheet.visibility = View.VISIBLE
+
+            viewModel.tripLiveTrip(viewModel.dataManager.tripId)
+
+        } else {
+
+            binding.startTripCardView.visibility = View.VISIBLE
+            binding.bottomSheet.visibility = View.GONE
+
+            viewModel.tripLiveTrip(tripId.toString().toString())
+        }
+
+
+        adapter = StationsAdapter(ArrayList(), this)
+        binding.stations.adapter = adapter
+
+
+
+        setLiseners()
+
+    }
+
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false)
+        googleMap.getUiSettings().setMapToolbarEnabled(false)
+        googleMap.getUiSettings().setZoomControlsEnabled(false)
+        googleMap.getUiSettings().setCompassEnabled(false)
+        if (ActivityCompat.checkSelfPermission(
+                baseActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                baseActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        googleMap.setMyLocationEnabled(true);
+        googleMap.setOnMarkerClickListener(GoogleMap.OnMarkerClickListener {
+
+            onMarkerClick(it)
+        })
+        if (viewModel.dataManager.isTripLive) {
+            Handler().post(Runnable {
+                mMap?.setPadding(
+                    0,
+                    0,
+                    0,
+                    150
+                )
+            })
+        } else {
+
+
+            Handler().post(Runnable {
+                mMap?.setPadding(
+                    0,
+                    binding.startTripCardView.getHeight(),
+                    0,
+                    0
+                )
+            })
+        }
+        subscribeObservers()
 
 
     }
@@ -188,6 +320,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
         mLocationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         mLocationRequest!!.setInterval(INTERVAL)
+        mLocationRequest!!.setSmallestDisplacement(20.0F)
         mLocationRequest!!.setFastestInterval(FASTEST_INTERVAL)
 
         // Create LocationSettingsRequest object using location request
@@ -251,9 +384,20 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
             } catch (e: java.lang.Exception) {
                 Logger.d(e.message)
             }
+
+            if (counter > 420) {
+
+                if (viewModel.dataManager.logId != null && viewModel.dataManager.tripId != null) {
+                    viewModel.updateBusinessTripDriverLocation(
+                        location.latitude.toString(),
+                        location.longitude.toString()
+                    )
+                    counter = 1
+                }
+
+            }
         }
 
-        // You can now create a LatLng Object for use with maps
     }
 
     private fun stoplocationUpdates() {
@@ -262,59 +406,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
             mFusedLocationProviderClient!!.removeLocationUpdates(mLocationCallback)
 
         } catch (e: Exception) {
-
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding = viewDataBinding
-
-
-
-        if (viewModel.dataManager.isTripLive) {
-
-            binding.startTripCardView.visibility = View.GONE
-            binding.bottomSheet.visibility = View.VISIBLE
-
-            viewModel.tripLiveTrip(viewModel.dataManager.tripId)
-
-        } else {
-
-            binding.startTripCardView.visibility = View.VISIBLE
-            binding.bottomSheet.visibility = View.GONE
-
-            viewModel.tripLiveTrip(tripId.toString().toString())
-        }
-
-
-        setLiseners()
-        binding.mapView?.onCreate(savedInstanceState)
-        binding.mapView?.getMapAsync { mapboxMap ->
-
-            map_boxMap = mapboxMap
-            map_boxMap!!.setPadding(100, 100, 100, 100)
-
-            map_boxMap!!.getUiSettings().setZoomGesturesEnabled(true)
-            map_boxMap!!.getUiSettings().setScrollGesturesEnabled(true)
-            map_boxMap!!.getUiSettings().setAllGesturesEnabled(true)
-            map_boxMap!!.getUiSettings().setRotateGesturesEnabled(true)
-            map_boxMap!!.getUiSettings().getFocalPoint()
-            map_boxMap!!.getUiSettings().setRotateVelocityAnimationEnabled(true)
-            map_boxMap!!.getUiSettings().setTiltGesturesEnabled(true)
-            map_boxMap!!.getUiSettings().setScaleVelocityAnimationEnabled(true)
-            map_boxMap!!.getUiSettings().setCompassEnabled(false)
-            map_boxMap!!.getUiSettings().setDeselectMarkersOnTap(true)
-            map_boxMap!!.setOnMarkerClickListener(this)
-
-            mapboxMap.setStyle(Style.MAPBOX_STREETS, Style.OnStyleLoaded() { t ->
-                enableLocationComponent(t);
-            });
-
-            subscribeObservers()
-
 
         }
     }
@@ -333,22 +424,46 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
         when (p0?.id) {
             R.id.startTrip -> {
 
+
+
+
                 if (status) {
 
 
-                    if (mLastLocation != null) {
-                        viewModel.startTrip(
-                            tripId.toString(),
-                            mLastLocation?.latitude.toString(),
-                            mLastLocation?.longitude.toString()
-                        )
-                    } else {
-                        viewModel.startTrip(
-                            tripId.toString(),
-                            "0.0",
-                            "0.0"
-                        )
+                    val dialogBuilder = android.app.AlertDialog.Builder(baseActivity)
+                    // ...Irrelevant code for customizing the buttons and title
+                    val inflater = this.layoutInflater
+                    val dialogView = inflater.inflate(R.layout.start_trip_confirm, null)
+                    dialogBuilder.setView(dialogView)
+
+                    val cancel = dialogView.findViewById<View>(R.id.cancel) as Button
+                    val yes = dialogView.findViewById<View>(R.id.yes) as TextView
+
+                    val alertDialog = dialogBuilder.create()
+                    cancel.setOnClickListener {
+                        alertDialog.dismiss()
                     }
+                    yes.setOnClickListener {
+                        alertDialog.dismiss()
+
+                        if (mLastLocation != null) {
+                            viewModel.startTrip(
+                                tripId.toString(),
+                                mLastLocation?.latitude.toString(),
+                                mLastLocation?.longitude.toString()
+                            )
+                        } else {
+                            viewModel.startTrip(
+                                tripId.toString(),
+                                "0.0",
+                                "0.0"
+                            )
+                        }
+                    }
+                    alertDialog.getWindow()
+                        ?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+
+                    alertDialog.show()
 
 
                 } else {
@@ -356,32 +471,64 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
                 }
 
-
             }
 
             R.id.endTrip -> {
 
-                if (mLastLocation != null) {
+                if (CommonUtilities.distance(
+                        destination?.latitude!!,
+                        destination?.longitude!!,
+                        mLastLocation?.latitude!!,
+                        mLastLocation?.longitude!!
+                    ) < 0.6
+                ) {
+                    val dialogBuilder = android.app.AlertDialog.Builder(baseActivity)
+                    // ...Irrelevant code for customizing the buttons and title
+                    val inflater = this.layoutInflater
+                    val dialogView = inflater.inflate(R.layout.start_trip_confirm, null)
+                    dialogBuilder.setView(dialogView)
+
+                    val cancel = dialogView.findViewById<View>(R.id.cancel) as Button
+                    val yes = dialogView.findViewById<View>(R.id.yes) as TextView
+
+                    val alertDialog = dialogBuilder.create()
+                    cancel.setOnClickListener {
+                        alertDialog.dismiss()
+                    }
+                    yes.setOnClickListener {
+                        alertDialog.dismiss()
+                        if (mLastLocation != null) {
 
 
-                    viewModel.endTrip(
-                        viewModel.dataManager?.tripId,
-                        viewModel.dataManager?.logId + "",
-                        mLastLocation?.latitude.toString(),
-                        mLastLocation?.longitude.toString()
+                            viewModel.endTrip(
+                                viewModel.dataManager?.tripId,
+                                viewModel.dataManager?.logId + "",
+                                mLastLocation?.latitude.toString(),
+                                mLastLocation?.longitude.toString()
 
-                    )
+                            )
+
+
+                        } else {
+                            viewModel.endTrip(
+                                viewModel.dataManager?.tripId,
+                                viewModel.dataManager?.logId + "",
+                                "0.0",
+                                "0.0"
+                            )
+                        }
+                    }
+                    alertDialog.getWindow()
+                        ?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+                    alertDialog.show()
 
 
                 } else {
-                    viewModel.endTrip(
-                        viewModel.dataManager?.tripId,
-                        viewModel.dataManager?.logId + "",
-                        "0.0",
-                        "0.0"
-                    )
+                    Toast.makeText(
+                        baseActivity,
+                        "لم تصل الى وجهتك بعد", Toast.LENGTH_LONG
+                    ).show();
                 }
-
 
             }
 
@@ -396,14 +543,13 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
                                 mLastLocation!!.longitude
                             )
                         ) // Sets the new camera position
-                        .zoom(17.0) // Sets the zoom
+                        .zoom(17f) // Sets the zoom
                         .build(); // Creates a CameraPosition from the builder
 
 
-                    if (map_boxMap != null) {
-                        map_boxMap!!.animateCamera(
-                            CameraUpdateFactory
-                                .newCameraPosition(position), 7000
+                    if (mMap != null) {
+                        mMap!!.animateCamera(
+                            CameraUpdateFactory.newCameraPosition(position)
                         );
                     }
                 }
@@ -413,8 +559,17 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
             R.id.zoom_route -> {
 
+                if (points != null) {
+                    val bounds = points?.build()
+                    val cu: CameraUpdate = CameraUpdateFactory.newLatLngBounds(
+                        bounds,
+                        100
+                    )
+                    mMap?.animateCamera(cu, 200, null)
+                }
 
-                try {   // zero padding
+
+                /* try {   // zero padding
                     val cameraPosition2 =
                         map_boxMap?.getCameraForLatLngBounds(
                             bounds.build(),
@@ -426,38 +581,74 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
                     )
                 } catch (e: Exception) {
 
-                }
+                }*/
 
 
             }
 
+            R.id.attandance -> {
 
-            R.id.navigation -> {
+                open_attandance_dialog()
+                /*   val intent = Intent(
+                       Intent.ACTION_VIEW,
+                       Uri.parse(getNavigationUrl(latLngs!!))
+                   )
+                   intent.setClassName(
+                       "com.google.android.apps.maps",
+                       "com.google.android.maps.MapsActivity"
+                   )
+                   startActivity(intent)
 
-                if (route != null) {
+                   *//* if (route != null) {
                     val options = NavigationLauncherOptions.builder()
                         .directionsRoute(route)
                         .build()
 
                     NavigationLauncher.startNavigation(baseActivity, options)
-                }
+                }*/
 
 
             }
+
+            R.id.navigation -> {
+
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(getNavigationUrl(latLngsWayPoints!!, origin!!, destination!!))
+                )
+                intent.setClassName(
+                    "com.google.android.apps.maps",
+                    "com.google.android.maps.MapsActivity"
+                )
+                startActivity(intent)
+
+
+            }
+
 
             R.id.openChat -> {
 
 
-                open_chat_dialog()
+                if (group_chat)
+                    open_chat_dialog()
+                else
+                    Toast.makeText(
+                        baseActivity,
+                        "Chat service not available now",
+                        Toast.LENGTH_LONG
+                    ).show();
 
 
             }
 
-
             R.id.passengersButton -> {
 
 
-                open_station_dialog(null, viewModel.dataManager.tripId)
+                open_station_dialog(
+                    null,
+                    binding.name.text.toString(),
+                    viewModel.dataManager.tripId
+                )
 
 
             }
@@ -486,90 +677,42 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
     override fun onStart() {
         super.onStart()
-        binding.mapView?.onStart()
+
     }
 
     override fun onResume() {
         super.onResume()
-        binding.mapView?.onResume()
+
         startLocationUpdates()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapView?.onPause()
+
     }
 
     override fun onStop() {
         super.onStop()
-        binding.mapView?.onStop()
+
         stoplocationUpdates()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapView?.onLowMemory()
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapView?.onDestroy()
+
         stoplocationUpdates()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        binding.mapView?.onSaveInstanceState(outState);
+
     }
 
-    private fun enableLocationComponent(@NonNull loadedMapStyle: Style) {
-        if (PermissionsManager.areLocationPermissionsGranted(activity)) {
-            val locationComponent: LocationComponent = map_boxMap?.getLocationComponent()!!
-            locationComponent.activateLocationComponent(
-                LocationComponentActivationOptions.builder(activity!!, loadedMapStyle).build()
-            )
-            if (ActivityCompat.checkSelfPermission(
-                    baseActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    baseActivity,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
-            }
-            locationComponent.isLocationComponentEnabled = true
-            // Set the LocationComponent's camera mode
-            locationComponent.cameraMode = CameraMode.TRACKING
-            // Set the LocationComponent's render mode
-            locationComponent.renderMode = RenderMode.NORMAL
-        } else {
-            permissionsManager = PermissionsManager(this)
-            permissionsManager!!.requestLocationPermissions(activity)
-        }
-    }
-
-
-    override fun onExplanationNeeded(permissionsToExplain: List<String?>?) {
-        Toast.makeText(activity, "location not enabled", Toast.LENGTH_LONG).show()
-    }
-
-    override fun onPermissionResult(granted: Boolean) {
-
-        if (granted) {
-            map_boxMap?.getStyle(OnStyleLoaded { style -> enableLocationComponent(style) })
-        } else {
-            Toast.makeText(activity, "Location services not allowed", Toast.LENGTH_LONG).show()
-            activity!!.finish()
-        }
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -589,6 +732,11 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
             if (!t.hasErrors()) {
 
                 Logger.d(t.data().toString())
+
+
+                if (t.data()?.trip()?.group_chat() != null)
+                    group_chat = t.data()?.trip()?.group_chat()!!
+
 
                 binding?.name.text = t.data()?.trip()?.name()
 
@@ -639,30 +787,101 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
                 if (!t.data()?.trip()?.stations()?.isEmpty()!!) {
 
+                    points = LatLngBounds.Builder()
+
                     for (model in t.data()?.trip()?.stations()!!) {
 
-                        Logger.d(model)
+                        if (model.state().toString() == "PICKABLE") {
+                            latLngsWayPoints?.add(
 
-                        map_boxMap?.addMarker(
-                            MarkerOptions()
-                                .position(
+                                LatLng(
+                                    model.latitude()?.toDouble()!!,
+                                    model.longitude()?.toDouble()!!
+                                )
+                            )
+                        } else if (model.state().toString() == "START") {
+                            origin = LatLng(
+                                model.latitude()?.toDouble()!!,
+                                model.longitude()?.toDouble()!!
+                            )
+                        } else if (model.state().toString() == "END") {
+                            destination = LatLng(
+                                model.latitude()?.toDouble()!!,
+                                model.longitude()?.toDouble()!!
+                            )
+                        }
+
+                        latLngs?.add(
+
+                            LatLng(
+                                model.latitude()?.toDouble()!!,
+                                model.longitude()?.toDouble()!!
+                            )
+                        )
+
+
+                        if (model.state().toString() == "START") {
+                            val markerOptions =
+                                MarkerOptions().position(
                                     LatLng(
                                         model.latitude()?.toDouble()!!,
                                         model.longitude()?.toDouble()!!
                                     )
                                 )
-                                .setIcon(
-                                    CommonUtilities.drawableToIcon(
-                                        baseActivity,
-                                        R.drawable.ic_station_icon
+                                    .title("your_title").icon(
+                                        bitmapDescriptorFromVector(
+                                            baseActivity,
+                                            R.drawable.marker_icon_3
+                                        )
+                                    )
+                                    .snippet(model.id())
+                            val addedMarker = mMap!!.addMarker(markerOptions)
+                            val obj: String = model.name().toString()
+                            addedMarker.tag = obj
+
+                        } else if (model.state().toString() == "END") {
+                            val markerOptions =
+                                MarkerOptions().position(
+                                    LatLng(
+                                        model.latitude()?.toDouble()!!,
+                                        model.longitude()?.toDouble()!!
                                     )
                                 )
-                                .setSnippet(model.id())
-                                .title(model.name())
-                        )
+                                    .title("your_title").icon(
+                                        bitmapDescriptorFromVector(
+                                            baseActivity,
+                                            R.drawable.marker_icon_2
+                                        )
+                                    )
+                                    .snippet(model.id())
+                            val addedMarker = mMap!!.addMarker(markerOptions)
+                            val obj: String = model.name().toString()
+                            addedMarker.tag = obj
+
+                        } else {
+                            val markerOptions =
+                                MarkerOptions().position(
+                                    LatLng(
+                                        model.latitude()?.toDouble()!!,
+                                        model.longitude()?.toDouble()!!
+                                    )
+                                )
+                                    .title("your_title").icon(
+                                        bitmapDescriptorFromVector(
+                                            baseActivity,
+                                            R.drawable.marker_icon
+                                        )
+                                    )
+                                    .snippet(model.id())
+                            val addedMarker = mMap!!.addMarker(markerOptions)
+                            val obj: String = model.name().toString()
+                            addedMarker.tag = obj
+
+                        }
 
 
-                        bounds.include(
+
+                        points?.include(
                             LatLng(
                                 model.latitude()?.toDouble()!!,
                                 model.longitude()?.toDouble()!!
@@ -670,112 +889,39 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
                         )
 
                     }
-                    // From Mapbox to The White House
-                    val origin = Point.fromLngLat(
-                        t.data()?.trip()?.stations()!![0].longitude()?.toDouble()!!,
-                        t.data()?.trip()?.stations()!![0].latitude()?.toDouble()!!
-                    )
-                    val destination = Point.fromLngLat(
-                        t.data()?.trip()?.stations()!!.last().longitude()?.toDouble()!!,
-                        t.data()?.trip()?.stations()!!.last().latitude()?.toDouble()!!
-                    )
 
-
-
-
-
-
-                    if (t.data()?.trip()?.stations()!!.size > 1) {
-
-                        val cameraPosition2 =
-                            map_boxMap?.getCameraForLatLngBounds(
-                                bounds.build(),
-                                intArrayOf(100, 100, 100, 100)
-                            )
-                        map_boxMap?.easeCamera(
-                            CameraUpdateFactory.newCameraPosition(cameraPosition2!!),
-                            5000
+                    if (points != null) {
+                        val bounds = points?.build()
+                        val cu: CameraUpdate = CameraUpdateFactory.newLatLngBounds(
+                            bounds,
+                            100
                         )
-
-
-                        val navigation = NavigationRoute.builder(baseActivity)
-                            .accessToken(getString(R.string.mapbox_access_token))
-                            .origin(origin)
-                            .destination(destination)
-                            .profile(DirectionsCriteria.PROFILE_DRIVING)
-
-
-                        for (model in t.data()?.trip()?.stations()!!.subList(
-                            1,
-                            t.data()?.trip()?.stations()!!.size - 1
-                        )) {
-
-                            Logger.d(model.longitude()?.toDouble()!!.toString())
-                            Logger.d(t.data()?.trip()?.stations()!!.size)
-
-                            navigation.addWaypoint(
-                                Point.fromLngLat(
-                                    model.longitude()?.toDouble()!!,
-                                    model.latitude()?.toDouble()!!
-                                )
-                            )
-                        }
-
-                        navigation.build()
-                            .getRoute(object : retrofit2.Callback<DirectionsResponse?> {
-                                override fun onResponse(
-                                    call: retrofit2.Call<DirectionsResponse?>,
-                                    response: retrofit2.Response<DirectionsResponse?>
-                                ) {
-
-
-                                    if (response.body() == null) {
-                                        Logger.d("null")
-                                        return
-                                    } else if (response.body()!!.routes().size == 0) {
-                                        Logger.d("0")
-                                        return
-                                    }
-
-                                    Logger.d("done")
-
-                                    val directionsRoute = response.body()!!.routes()[0]
-                                    if (navigationMapRoute != null) {
-                                        navigationMapRoute?.removeRoute()
-
-                                        Logger.d("removeRoute")
-                                    } else {
-                                        try {
-                                            navigationMapRoute = NavigationMapRoute(
-                                                null, binding.mapView, map_boxMap!!
-                                            )
-
-                                        } catch (e: Exception) {
-
-                                        }
-
-                                        Logger.d("new navigationMapRoute")
-                                    }
-                                    route = directionsRoute
-                                    try {
-                                        navigationMapRoute!!.addRoute(directionsRoute)
-
-                                    } catch (e: Exception) {
-
-                                    }
-
-                                }
-
-                                override fun onFailure(
-                                    call: retrofit2.Call<DirectionsResponse?>,
-                                    t: Throwable
-                                ) {
-                                    Logger.d("onFailure")
-
-                                }
-                            })
+                        mMap?.animateCamera(cu, 200, null)
                     }
 
+
+                    if (latLngsWayPoints == null) {
+                        Toast.makeText(
+                            baseActivity,
+                            "latLngsWayPoints Error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (origin == null) {
+                        Toast.makeText(
+                            baseActivity,
+                            "origin Error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (destination == null) {
+                        Toast.makeText(
+                            baseActivity,
+                            "destination null",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        downloadUrl2(getDirectionsUrl(latLngsWayPoints!!, origin!!, destination!!))
+
+                    }
 
 
 
@@ -796,7 +942,9 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
                         )
                     }
 
-                    binding.stations.adapter = StationsAdapter(stations, baseActivity)
+
+
+                    adapter?.setTrips(stations)
 
 
                 }
@@ -808,7 +956,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
         })
 
-        viewModel?.responseLiveStartTrip?.observe(viewLifecycleOwner, Observer { t ->
+        viewModel?.responseLiveStartTrip?.observe(viewLifecycleOwner, Observer
+        { t ->
 
 
             if (!t.hasErrors()) {
@@ -821,6 +970,29 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
                 binding.startTripCardView.visibility = View.GONE
                 binding.bottomSheet.visibility = View.VISIBLE
+
+
+
+
+                Handler().post(Runnable {
+                    mMap?.setPadding(
+                        0,
+                        0,
+                        0,
+                        150
+                    )
+                })
+
+                if (points != null) {
+                    val bounds = points?.build()
+                    val cu: CameraUpdate = CameraUpdateFactory.newLatLngBounds(
+                        bounds,
+                        100
+                    )
+                    mMap?.animateCamera(cu, 200, null)
+                }
+
+
                 pusher()
 
             } else {
@@ -829,7 +1001,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
         })
 
-        viewModel?.responseLiveEndTrip?.observe(viewLifecycleOwner, Observer { t ->
+        viewModel?.responseLiveEndTrip?.observe(viewLifecycleOwner, Observer
+        { t ->
 
             if (!t.hasErrors()) {
 
@@ -843,6 +1016,29 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
                 baseActivity.onBackPressed()
 
+
+
+
+
+                Handler().post(Runnable {
+                    mMap?.setPadding(
+                        0,
+                        binding.startTripCardView.getHeight(),
+                        0,
+                        0
+                    )
+                })
+
+                if (points != null) {
+                    val bounds = points?.build()
+                    val cu: CameraUpdate = CameraUpdateFactory.newLatLngBounds(
+                        bounds,
+                        100
+                    )
+                    mMap?.animateCamera(cu, 200, null)
+                }
+
+
             } else {
                 Logger.d(t.errors()[0].message())
             }
@@ -850,7 +1046,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
         })
 
 
-        viewModel?.progress?.observe(viewLifecycleOwner, Observer {
+        viewModel?.progress?.observe(viewLifecycleOwner, Observer
+        {
 
             when (it) {
                 0 -> {
@@ -869,11 +1066,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
     }
 
-    override fun onMarkerClick(marker: Marker): Boolean {
-        Logger.d(marker.snippet)
+    fun onMarkerClick(marker: Marker): Boolean {
+        val obj: String? = marker.tag as String?
+        Logger.d(marker.snippet + " NAMEEEEE " + obj)
 
         if (viewModel.dataManager.isTripLive) {
-            open_station_dialog(marker.snippet, null)
+            open_station_dialog(marker.snippet, obj, null)
         } else {
             Toast.makeText(baseActivity, "Trip Not Started Yet", Toast.LENGTH_SHORT).show()
         }
@@ -881,8 +1079,16 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
         return true
     }
 
-    fun open_station_dialog(stationID: String?, tripId: String?) {
-        val cdd = StationDialog(baseActivity, stationID, tripId)
+    fun open_station_dialog(stationID: String?, stationName: String?, tripId: String?) {
+        val cdd = StationDialog(
+            baseActivity,
+            stationID,
+            stationName,
+            tripId,
+            binding.name.text.toString(),
+            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
+            this
+        )
         cdd.setCanceledOnTouchOutside(true)
         cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -896,6 +1102,25 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
 
     fun open_chat_dialog() {
         val cdd = ChatDialog(baseActivity)
+        cdd.setCanceledOnTouchOutside(true)
+        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val window = cdd.getWindow();
+        window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        );
+
+        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        cdd.show()
+    }
+
+    fun open_attandance_dialog() {
+        val cdd = AttandanceDialog(
+            baseActivity,
+            binding.name.text.toString(),
+            viewModel.dataManager.tripId,
+            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!)
+        )
         cdd.setCanceledOnTouchOutside(true)
         cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -920,22 +1145,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
         wssPort.isEncrypted = true
         val pusher = Pusher("48477c9c2419bd65e74f", wssPort)
 
-        try {
-            pusher.connect(object : ConnectionEventListener {
-                override fun onConnectionStateChange(connectionStateChange: ConnectionStateChange) {
-
-                }
-
-                override fun onError(message: String, code: String, e: java.lang.Exception) {
-                }
-
-
-            }, ConnectionState.ALL)
-
-        } catch (e: Exception) {
-
-        }
-
 
         val sb2 = StringBuilder()
         sb2.append("private-App.BusinessTrip.")
@@ -957,4 +1166,321 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener,
     }
 
 
+    @Throws(IOException::class)
+    private fun downloadUrl2(strUrl: String): String? {
+        var data = ""
+        Completable.fromAction {
+            var iStream: InputStream? = null
+            var urlConnection: HttpURLConnection? = null
+            try {
+                val url = URL(strUrl)
+
+                // Creating an http connection to communicate with url
+                urlConnection = url.openConnection() as HttpURLConnection
+
+                // Connecting to url
+                urlConnection.connect()
+
+                // Reading data from url
+                iStream = urlConnection.inputStream
+                val br = BufferedReader(InputStreamReader(iStream))
+                val sb = StringBuffer()
+                var line: String? = ""
+                while (br.readLine().also { line = it } != null) {
+                    sb.append(line)
+                }
+                data = sb.toString()
+                Log.d("  downloadUrlaa  ", data)
+                br.close()
+            } catch (e: java.lang.Exception) {
+                Log.d("  Exceptionaa  ", e.toString())
+            } finally {
+                iStream!!.close()
+                urlConnection!!.disconnect()
+            }
+
+
+            val jObject: JSONObject
+            var routes: List<List<HashMap<String, String>>>? = null
+            try {
+                jObject = JSONObject(data)
+                Log.d("ParserTask", data)
+                val parser = DataParser()
+                Log.d("ParserTask", parser.toString())
+
+                // Starts parsing data
+                routes = parser.parse(jObject)
+                Log.d("ParserTask", "Executing routes")
+                Log.d("ParserTask", routes.toString())
+            } catch (e: java.lang.Exception) {
+                Log.d("ParserTask", e.toString())
+                e.printStackTrace()
+                throw RuntimeException(e.message)
+            }
+
+
+            var points: ArrayList<LatLng?>? = null
+            var lineOptions: PolylineOptions? = null
+            if (routes != null) {
+                // Traversing through all the routes
+                for (i in routes.indices) {
+                    points = ArrayList()
+                    lineOptions = PolylineOptions()
+
+                    // Fetching i-th route
+                    val path = routes[i]
+
+                    // Fetching all the points in i-th route
+                    for (j in path.indices) {
+                        val point = path[j]
+                        val lat = point["lat"]!!.toDouble()
+                        val lng = point["lng"]!!.toDouble()
+                        val position = LatLng(lat, lng)
+                        points.add(position)
+                    }
+
+
+                    // Adding all the points in the route to LineOptions
+                    lineOptions.addAll(points)
+                    lineOptions.width(10f)
+                    lineOptions.color(
+                        Color.parseColor(
+                            baseActivity.getResources().getString(0 + R.color.colorPrimaryLight)
+                        )
+                    )
+                    Log.d("onPostExecute", "onPostExecute lineoptions decoded")
+                }
+            }
+            // Drawing polyline in the Google Map for the i-th route
+            if (lineOptions != null && points != null) {
+
+                baseActivity.runOnUiThread { mMap?.addPolyline(lineOptions) }
+
+            } else {
+                Log.d("onPostExecute", "without Polylines drawn")
+            }
+
+
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
+
+
+
+
+
+        return data
+    }
+
+    private fun getLineUrl(points: ArrayList<LatLng>): String {
+
+
+        if (points.size > 2) {
+            val str_origin =
+                "origin=" + points[0].latitude.toString() + "," + points[0].longitude.toString()
+
+            // Destination of route
+            val str_dest =
+                "destination=" + points.get(points.size - 1).latitude.toString() + "," + points.get(
+                    points.size - 1
+                ).longitude.toString()
+
+            val waypoints = StringBuffer()
+            var flag = 0
+            for (model in points) {
+                if (flag == 0)
+                    waypoints.append("waypoints=" + model.latitude.toString() + "," + model.longitude.toString())
+                else
+                    waypoints.append("%7C" + model.latitude.toString() + "," + model.longitude.toString())
+
+                flag++
+            }
+
+
+            Log.d(" url = ", waypoints.toString())
+
+
+            // Sensor enabled
+            val sensor = "sensor=false"
+
+            // Building the parameters to the web service
+            val parameters = "$str_origin&$str_dest&$sensor&$waypoints"
+
+            // Output format
+            val output = "json"
+
+            // Building the url to the web service
+            val url =
+                "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + context!!.resources.getString(
+                    R.string.google_map_api
+                )
+
+
+
+            return url
+
+        } else if (points.size == 2) {
+
+            val str_origin =
+                "origin=" + points[0].latitude.toString() + "," + points[0].longitude.toString()
+
+            // Destination of route
+            val str_dest =
+                "destination=" + points.get(points.size - 1).latitude.toString() + "," + points.get(
+                    points.size - 1
+                ).longitude.toString()
+
+
+            // Sensor enabled
+            val sensor = "sensor=false"
+
+            // Building the parameters to the web service
+            val parameters = "$str_origin&$str_dest&$sensor"
+
+            // Output format
+            val output = "json"
+
+            //Building the url to the web service
+            val url =
+                "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + context!!.resources.getString(
+                    R.string.google_map_api
+                )
+
+
+
+            return url
+
+
+        } else {
+            return ""
+        }
+
+
+    }
+
+
+    private fun getDirectionsUrl(
+        points: ArrayList<LatLng>,
+        origin: LatLng,
+        destination: LatLng
+    ): String {
+
+        val str_origin =
+            "origin=" + origin.latitude.toString() + "," + origin.longitude.toString()
+
+        // Destination of route
+        val str_dest =
+            "destination=" + destination.latitude.toString() + "," + destination.longitude.toString()
+
+
+        // Waypoints
+        var waypoints = ""
+        for (i in 0 until points.size) {
+            val point = points.get(i) as LatLng
+            if (i == 0) waypoints = "waypoints=optimize:true|"
+            waypoints += if (i == points.size - 1) {
+                point.latitude.toString() + "," + point.longitude
+            } else {
+                point.latitude.toString() + "," + point.longitude + "|"
+            }
+        }
+
+        // Building the parameters to the web service
+        val parameters =
+            "$str_origin&$str_dest&$waypoints&mode=driving&key=" + context!!.resources.getString(R.string.google_map_api)
+
+
+        // Output format
+        val output = "json"
+
+        return "https://maps.googleapis.com/maps/api/directions/$output?$parameters"
+    }
+
+
+    private fun getNavigationUrl(
+        points: ArrayList<LatLng>,
+        origin: LatLng,
+        destination: LatLng
+    ): String {
+
+
+        val str_origin =
+            "origin=" + origin.latitude.toString() + "," + origin.longitude.toString()
+
+        // Destination of route
+        val str_dest =
+            "destination=" + destination.latitude.toString() + "," + destination.longitude.toString()
+
+
+        // Waypoints
+        var waypoints = ""
+        for (i in 0 until points.size) {
+            val point = points.get(i) as LatLng
+            if (i == 0) waypoints = "waypoints=optimize:true|"
+            waypoints += if (i == points.size - 1) {
+                point.latitude.toString() + "," + point.longitude
+            } else {
+                point.latitude.toString() + "," + point.longitude + "|"
+            }
+        }
+
+        // Building the parameters to the web service
+        val parameters =
+            "$str_origin&$str_dest&$waypoints&key=" + context!!.resources.getString(R.string.google_map_api)
+
+
+        // Output format
+        val output = "json"
+
+        //Building the url to the web service
+        val url = "https://www.google.com/maps/dir/?api=1&" + parameters + "&travelmode=navigate"
+
+
+        Logger.d(url)
+        return url
+
+
+    }
+
+    override fun setOnStationClick(station: Station) {
+        val cdd = StationDialog(
+            baseActivity,
+            station.id,
+            station.name,
+            null,
+            binding.name.text.toString(),
+            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
+            this
+        )
+        com.orhanobut.logger.Logger.d(station.id)
+        cdd.setCanceledOnTouchOutside(true)
+        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        cdd.show()
+    }
+
+    override fun openPhonesDialog(stationUser: StationUser) {
+        val cdd = PhonesDialog(
+            baseActivity,
+            stationUser
+        )
+        cdd.setCanceledOnTouchOutside(true)
+        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        cdd.show()
+    }
+
+    override fun openUserChatDialog(stationUser: StationUser) {
+        val cdd = DirectChatDialog(
+            baseActivity,
+            stationUser
+        )
+        cdd.setCanceledOnTouchOutside(true)
+        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        cdd.show()
+    }
 }

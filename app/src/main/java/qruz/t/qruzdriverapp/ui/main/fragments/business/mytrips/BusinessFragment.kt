@@ -3,10 +3,12 @@ package qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips
 
 import android.os.Bundle
 import android.view.View
+import android.widget.SearchView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
@@ -20,6 +22,7 @@ import qruz.t.qruzdriverapp.model.Partner
 import qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips.days.DaysAdapter
 import qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips.days.TripsInterFace
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.jvm.internal.Intrinsics
 
 
@@ -33,18 +36,20 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BusinessFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFace {
+class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace {
 
     private var param1: String? = null
     private var param2: String? = null
 
     public val TAG = "BusinessFragment"
 
-    lateinit var fragmentBusinessBinding: FragmentBusinessBinding
+    lateinit var binding: FragmentBusinessBinding
     private lateinit var viewModel: BusinessViewModel
     private lateinit var businessAdapter: BusinessAdapter
     private lateinit var daysAdapter: DaysAdapter
-
+    var fullDayList = ArrayList<DriverTrips>()
+    var upcomingList = ArrayList<DriverTrips>()
+    var pastlist = ArrayList<DriverTrips>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Mapbox.getInstance(getApplicationContext(), getString(R.string.mapbox_access_token));
@@ -74,12 +79,54 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentBusinessBinding = viewDataBinding
+        binding = viewDataBinding
         viewModel = ViewModelProviders.of(this).get(BusinessViewModel::class.java)
 
         initRecyclerView()
         initDaysRecyclerView()
         subscribeObservers()
+
+
+        viewDataBinding.PastLayout.setOnClickListener {
+
+            if (pastlist.isNullOrEmpty())
+                binding.emptyLayout.visibility = View.VISIBLE
+            else
+                binding.emptyLayout.visibility = View.GONE
+
+
+
+            businessAdapter.setTrips(pastlist)
+
+
+            viewDataBinding.upcomingLayout.background =
+                ContextCompat.getDrawable(baseActivity, R.drawable.white_background)
+            viewDataBinding.PastLayout.background =
+                ContextCompat.getDrawable(baseActivity, R.drawable.blue_background)
+
+
+        }
+
+        viewDataBinding.upcomingLayout.setOnClickListener {
+
+            if (upcomingList.isNullOrEmpty())
+                binding.emptyLayout.visibility = View.VISIBLE
+            else
+                binding.emptyLayout.visibility = View.GONE
+
+
+
+            businessAdapter.setTrips(upcomingList)
+
+
+            viewDataBinding.PastLayout.background =
+                ContextCompat.getDrawable(baseActivity, R.drawable.white_background)
+            viewDataBinding.upcomingLayout.background =
+                ContextCompat.getDrawable(baseActivity, R.drawable.blue_background)
+
+
+        }
+
 
 
         viewModel.getDriverTrips(getTodayName()!!);
@@ -91,18 +138,19 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFa
         viewModel?.responseLive?.observe(viewLifecycleOwner, androidx.lifecycle.Observer { t ->
 
 
-            if (!t.hasErrors()) {
-                var driverTripsList = ArrayList<DriverTrips>()
-                for (model in t.data()?.driverTrips()!!) {
+            fullDayList.clear()
+            upcomingList.clear()
+            pastlist.clear()
 
+            if (!t.hasErrors()) {
+
+
+                for (model in t.data()?.driverTrips()!!) {
 
 
                     var count = 0
 
-                    for (model2 in model.stations()!!)
-                    {
-                        count += model2.users()?.size!!
-                    }
+
 
 
                     Logger.d(model.name())
@@ -121,9 +169,31 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFa
                         count.toString(),
                         model.isReturn
                     )
-                    driverTripsList.add(driverTrips)
-                    businessAdapter.setTrips(driverTripsList)
+                    fullDayList.add(driverTrips)
                 }
+
+
+                for (trip in fullDayList) {
+
+
+                    if (trip.date.toLong() + 1800000 > System.currentTimeMillis()) {
+
+                        upcomingList.add(trip)
+
+                    } else {
+
+                        pastlist.add(trip)
+                    }
+                }
+
+                if (upcomingList.isNullOrEmpty())
+                    binding.emptyLayout.visibility = View.VISIBLE
+                else
+                    binding.emptyLayout.visibility = View.GONE
+
+                businessAdapter.setTrips(upcomingList)
+
+
             } else {
                 Logger.d(t.errors()[0].message())
 
@@ -131,24 +201,81 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFa
 
         })
 
+        viewModel?.responseLiveTrips?.observe(viewLifecycleOwner, androidx.lifecycle.Observer { t ->
+            fullDayList.clear()
+            upcomingList.clear()
+            pastlist.clear()
+
+            if (!t.hasErrors()) {
+
+
+                for (model in t.data()?.driverLiveBusinessTrips()!!) {
+
+
+                    var count = 0
+
+                    
+
+
+                    Logger.d(model.name())
+                    var driverTrips = DriverTrips(
+                        model.id(),
+                        model.name(),
+                        model.dayName(),
+                        model.date().toString(),
+                        model.startsAt(),
+                        model.flag(),
+                        Partner(
+                            model.partner()?.id(),
+                            model.partner()?.name(),
+                            model.partner()?.logo()
+                        ),
+                        count.toString(),
+                        model.isReturn
+                    )
+
+
+
+                    fullDayList.add(driverTrips)
+                }
+
+
+                if (fullDayList.isNullOrEmpty())
+                    binding.emptyLayout.visibility = View.VISIBLE
+                else
+                    binding.emptyLayout.visibility = View.GONE
+
+                businessAdapter.setTrips(fullDayList)
+
+
+            } else {
+                Logger.d(t.errors()[0].message())
+
+            }
+
+        })
+
+
+
+
         viewModel?.progress?.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
 
             when (it) {
                 0 -> {
-                    fragmentBusinessBinding.tripsProgressBar.visibility = View.GONE
+                    binding.tripsProgressBar.visibility = View.GONE
                 }
                 1 -> {
-                    fragmentBusinessBinding.tripsProgressBar.visibility = View.VISIBLE
+                    binding.tripsProgressBar.visibility = View.VISIBLE
                 }
             }
         })
     }
 
     private fun initRecyclerView() {
-        fragmentBusinessBinding.myTripsRecycler.layoutManager = LinearLayoutManager(baseActivity)
+        binding.myTripsRecycler.layoutManager = LinearLayoutManager(baseActivity)
         businessAdapter =
-            BusinessAdapter(ArrayList(), initGlide(), baseActivity.supportFragmentManager)
-        fragmentBusinessBinding.myTripsRecycler.adapter = businessAdapter
+            BusinessAdapter(ArrayList(),  initGlide(), baseActivity.supportFragmentManager)
+        binding.myTripsRecycler.adapter = businessAdapter
 
 
     }
@@ -156,36 +283,58 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFa
 
     private fun initDaysRecyclerView() {
         daysAdapter = DaysAdapter(ArrayList(), this)
-        fragmentBusinessBinding.daysRecycler.layoutManager =  LinearLayoutManager(baseActivity, LinearLayoutManager.HORIZONTAL, false)
-        fragmentBusinessBinding.daysRecycler.adapter = daysAdapter
+        binding.daysRecycler.layoutManager =
+            LinearLayoutManager(baseActivity, LinearLayoutManager.HORIZONTAL, false)
+        binding.daysRecycler.adapter = daysAdapter
 
         val arrayList = ArrayList<DayTrips>()
-        val str4 = "Sunday"
-        arrayList.add(DayTrips("Sun", str4, isToday(str4), isToday(str4)))
-        val str5 = "Monday"
-        arrayList.add(DayTrips("Mon", str5, isToday(str5), isToday(str5)))
-        val str6 = "Tuesday"
-        arrayList.add(DayTrips("Tus", str6, isToday(str6), isToday(str6)))
-        val str7 = "Wednesday"
-        arrayList.add(DayTrips("Wed", str7, isToday(str7), isToday(str7)))
-        val str8 = "Thursday"
-        arrayList.add(DayTrips("Thu", str8, isToday(str8), isToday(str8)))
-        val str9 = "Friday"
-        arrayList.add(DayTrips("Fri", str9, isToday(str9), isToday(str9)))
         val str10 = "Saturday"
-        arrayList.add(DayTrips("Sat", str10, isToday(str10), isToday(str10)))
+        arrayList.add(DayTrips("Sat", str10, isToday(str10), isToday(str10), true))
+        val str4 = "Sunday"
+        arrayList.add(DayTrips("Sun", str4, isToday(str4), isToday(str4), true))
+        val str5 = "Monday"
+        arrayList.add(DayTrips("Mon", str5, isToday(str5), isToday(str5), true))
+        val str6 = "Tuesday"
+        arrayList.add(DayTrips("Tus", str6, isToday(str6), isToday(str6), true))
+        val str7 = "Wednesday"
+        arrayList.add(DayTrips("Wed", str7, isToday(str7), isToday(str7), true))
+        val str8 = "Thursday"
+        arrayList.add(DayTrips("Thu", str8, isToday(str8), isToday(str8), true))
+        val str9 = "Friday"
+        arrayList.add(DayTrips("Fri", str9, isToday(str9), isToday(str9), true))
 
 
-        for (model in arrayList)
-        {
-            if (model.isSelected() && model.isToday())
-            {
-                arrayList.remove(model)
-                arrayList.add(0, model)
+        val newList = ArrayList<DayTrips>()
+
+        for (model in arrayList) {
+
+            Logger.d(model.isToday().toString())
+            if (model.isToday()) {
+
                 break
+            } else {
+
+                model.isVisible = false
             }
+
         }
-        daysAdapter.setDays(arrayList)
+
+
+        newList.add(DayTrips("Live Now", "Live Now", false, false, true))
+
+
+        for (model in arrayList) {
+            Logger.d(model.isVisible().toString())
+
+
+            if (model.isVisible()) {
+
+                newList.add(model)
+            }
+
+        }
+
+        daysAdapter.setDays(newList)
 
     }
 
@@ -218,9 +367,31 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>()  , TripsInterFa
     }
 
     override fun getTrips(str: String) {
+        binding.emptyLayout.visibility = View.GONE
 
 
-        viewModel.getDriverTrips(str);
 
-     }
+        if (str == "Live Now") {
+            binding.upcomingPastLayout.visibility = View.GONE
+            viewModel.getDriverLiveTrips();
+        } else {
+            if (isToday(str))
+                binding.upcomingPastLayout.visibility = View.VISIBLE
+            else {
+                binding.upcomingPastLayout.visibility = View.GONE
+
+
+                viewDataBinding.PastLayout.background =
+                    ContextCompat.getDrawable(baseActivity, R.drawable.white_background)
+                viewDataBinding.upcomingLayout.background =
+                    ContextCompat.getDrawable(baseActivity, R.drawable.blue_background)
+
+            }
+            viewModel.getDriverTrips(str);
+        }
+
+        businessAdapter.setTrips(ArrayList())
+
+
+    }
 }

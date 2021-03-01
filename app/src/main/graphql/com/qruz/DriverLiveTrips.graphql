@@ -1,0 +1,24 @@
+query DriverLiveTrips($id: ID!){
+
+    driverLiveBusinessTrips(driver_id: $id) {
+
+        id
+        name
+        dayName
+        date
+        startsAt
+        flag
+        isReturn
+        partner
+        {
+            id
+            name
+            logo
+        }
+
+
+
+
+    }
+
+}

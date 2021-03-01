@@ -186,14 +186,16 @@
                             android:layout_marginTop="20dp"
                             android:orientation="vertical">
 
-                                            <TextView
+                                             <TextView
+            android:textStyle="bold"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
                                                 android:textStyle="bold"
                                                 android:text="@string/services_requested"
                                                 android:textSize="16sp" />
 
-                                            <TextView
+                                             <TextView
+            android:textStyle="bold"
                                                 android:id="@+id/services_provided"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"

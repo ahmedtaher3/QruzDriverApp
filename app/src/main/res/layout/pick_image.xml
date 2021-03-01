@@ -18,7 +18,8 @@
             android:background="@color/colorPrimary"
             android:padding="10dp">
 
-            <TextView
+             <TextView
+            android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -57,7 +58,8 @@
                         android:layout_centerInParent="true"
                         android:src="@drawable/camera_icon" />
 
-                    <TextView
+                     <TextView
+            android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -80,7 +82,8 @@
                         android:layout_centerInParent="true"
                         android:src="@drawable/add_new_image_logo" />
 
-                    <TextView
+                     <TextView
+            android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -97,7 +100,8 @@
             android:layout_height="wrap_content"
             android:padding="5dp">
 
-            <TextView
+             <TextView
+            android:textStyle="bold"
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

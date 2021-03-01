@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.qruz.ChatMessagesQuery.ChatMessage
+import com.qruz.BusinessTripChatMessagesQuery
 import de.hdodenhof.circleimageview.CircleImageView
 import qruz.t.qruzdriverapp.R
 import qruz.t.qruzdriverapp.data.local.DataManager
@@ -21,7 +21,7 @@ class ChatAdapter(
 
     private val TYPE_ADMIN = 1
     private val TYPE_USER = 0
-    private var users = ArrayList<ChatMessage>()
+    private var users = ArrayList<BusinessTripChatMessagesQuery.BusinessTripChatMessage>()
 
 
     override fun getItemViewType(position: Int): Int {
@@ -84,17 +84,17 @@ class ChatAdapter(
         return users.size
     }
 
-    fun setMessages(users: List<ChatMessage>) {
-        this.users = ArrayList<ChatMessage>(users)
+    fun setMessages(users: List<BusinessTripChatMessagesQuery.BusinessTripChatMessage>) {
+        this.users = ArrayList<BusinessTripChatMessagesQuery.BusinessTripChatMessage>(users)
         notifyDataSetChanged()
     }
 
 
-    fun getMessages(): ArrayList<ChatMessage> {
+    fun getMessages(): ArrayList<BusinessTripChatMessagesQuery.BusinessTripChatMessage> {
         return this.users
     }
 
-    fun addItem(chatMessage: ChatMessage?) {
+    fun addItem(chatMessage: BusinessTripChatMessagesQuery.BusinessTripChatMessage?) {
         users.add(chatMessage!!)
         notifyDataSetChanged()
     }

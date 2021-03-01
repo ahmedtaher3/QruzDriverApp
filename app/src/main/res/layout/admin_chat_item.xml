@@ -21,7 +21,8 @@
         android:gravity="end"
         android:orientation="vertical">
 
-        <TextView
+         <TextView
+            android:textStyle="bold"
             android:id="@+id/msg_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +39,8 @@
             android:background="@drawable/message_send"
             android:padding="20dp">
 
-            <TextView
+             <TextView
+            android:textStyle="bold"
                 android:id="@+id/msg_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,7 +48,8 @@
                 android:textColor="@color/white" />
         </RelativeLayout>
 
-        <TextView
+         <TextView
+            android:textStyle="bold"
             android:id="@+id/msg_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

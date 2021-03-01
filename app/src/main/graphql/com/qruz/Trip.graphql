@@ -7,6 +7,7 @@ query  Trip($id: ID!){
         status
         startsAt
         flag
+        group_chat
         driver {
             id
             name

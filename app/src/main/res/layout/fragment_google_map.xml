@@ -64,7 +64,8 @@
                     android:text="@string/drop_address"
                     android:textSize="@dimen/_10sdp" />
 
-                <TextView
+                 <TextView
+            android:textStyle="bold"
                     android:id="@+id/destination"
 
                     android:layout_width="match_parent"
@@ -434,7 +435,8 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-                            <Button
+                             <Button
+                android:textStyle="bold"
                                 android:id="@+id/btn_cancel_ride"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/button_height"
@@ -448,7 +450,8 @@
                                 android:textColor="@color/button_text_color" />
 
 
-                            <Button
+                             <Button
+                android:textStyle="bold"
                                 android:id="@+id/btn_01_status"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/button_height"
@@ -740,7 +743,8 @@
 
                 </LinearLayout>
 
-                <Button
+                 <Button
+                android:textStyle="bold"
                     android:id="@+id/btn_confirm_payment"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_height"
@@ -834,7 +838,8 @@
 
             </LinearLayout>
 
-            <Button
+             <Button
+                android:textStyle="bold"
                 android:id="@+id/btn_rate_submit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -857,7 +862,8 @@
             android:visibility="visible">
 
 
-            <Button
+             <Button
+                android:textStyle="bold"
                 android:id="@+id/btn_go_offline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -1051,7 +1057,8 @@
                     android:orientation="horizontal"
                     android:weightSum="100">
 
-                    <Button
+                     <Button
+                android:textStyle="bold"
                         android:id="@+id/btn_02_reject"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_height"
@@ -1063,7 +1070,8 @@
                         android:text="@string/reject"
                         android:textColor="@color/button_text_color" />
 
-                    <Button
+                     <Button
+                android:textStyle="bold"
                         android:id="@+id/btn_02_accept"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_height"

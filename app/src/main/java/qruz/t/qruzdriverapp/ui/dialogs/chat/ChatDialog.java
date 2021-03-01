@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,6 +20,7 @@ import com.apollographql.apollo.api.Error;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.google.firebase.crashlytics.internal.common.AbstractSpiCall;
+import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.orhanobut.logger.Logger;
@@ -31,9 +33,9 @@ import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
 import com.pusher.client.util.HttpAuthorizer;
-import com.qruz.ChatMessagesQuery;
-import com.qruz.ChatMessagesQuery.ChatMessage;
 
+
+import com.qruz.BusinessTripChatMessagesQuery;
 import com.qruz.SendMesageMutation;
 import com.qruz.data.remote.ApolloClientUtils;
 
@@ -41,6 +43,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 
 import qruz.t.qruzdriverapp.R;
+import qruz.t.qruzdriverapp.Utilities.CommonUtilities;
 import qruz.t.qruzdriverapp.base.BaseApplication;
 import qruz.t.qruzdriverapp.data.local.DataManager;
 
@@ -65,7 +68,11 @@ public class ChatDialog extends Dialog {
     /* access modifiers changed from: protected */
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT);
         setContentView(R.layout.chat_dialog);
+
         dataManager = ((BaseApplication) this.c.getApplication()).getDataManager();
         progressBar = (ProgressBar) findViewById(R.id.chatProgressBar);
         sendMsgProgress = (ProgressBar) findViewById(R.id.sendMsgProgress);
@@ -91,14 +98,27 @@ public class ChatDialog extends Dialog {
 
     /* access modifiers changed from: 0000 */
     public void sendMsg(String str) {
-        this.sendMsgProgress.setVisibility(View.VISIBLE);
-        this.sendMsg.setVisibility(View.GONE);
-        Logger.d("sendMsggg" + dataManager.getLogId());
 
-        ApolloClientUtils.INSTANCE.setupApollo(this.dataManager.getAccessToken()).mutate(SendMesageMutation.builder().user_id(dataManager.getUser().getId()).message(str).log_id(dataManager.getLogId()).build()).enqueue(new Callback<SendMesageMutation.Data>() {
+        adapter.addItem(new BusinessTripChatMessagesQuery.BusinessTripChatMessage(
+                "",
+                "",
+                str,
+                CommonUtilities.convertToTime(System.currentTimeMillis()),
+                CommonUtilities.convertToTime(System.currentTimeMillis()),
+                new BusinessTripChatMessagesQuery.Sender(
+                        "",
+                        dataManager.getUser().getId(),
+                        dataManager.getUser().getName()
+                ),
+                "App\\Driver"));
+        adapter.notifyDataSetChanged();
+        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        chat_msg.setText("");
+
+        ApolloClientUtils.INSTANCE.setupApollo(this.dataManager.getAccessToken()).mutate(SendMesageMutation.builder().user_id(dataManager.getUser().getId()).message(str).trip_id(dataManager.getTripId()).log_id(dataManager.getLogId()).build()).enqueue(new Callback<SendMesageMutation.Data>() {
             public void onResponse(Response<SendMesageMutation.Data> response) {
-                Logger.d(response.data());
-                if (!response.hasErrors()) {
+                Logger.d(response.errors());
+           /*     if (!response.hasErrors()) {
                     c.runOnUiThread(new Runnable() {
                         public void run() {
                             sendMsgProgress.setVisibility(View.GONE);
@@ -115,18 +135,18 @@ public class ChatDialog extends Dialog {
                         sendMsg.setVisibility(View.VISIBLE);
                         Toast.makeText(c, R.string.something_wrong, Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
             }
 
             public void onFailure(ApolloException apolloException) {
-                c.runOnUiThread(new Runnable() {
+             /*   c.runOnUiThread(new Runnable() {
                     public void run() {
                         sendMsgProgress.setVisibility(View.GONE);
                         sendMsg.setVisibility(View.VISIBLE);
                         Toast.makeText(c, " sendMsg" + R.string.something_wrong, Toast.LENGTH_SHORT).show();
                     }
-                });
-                Logger.d(apolloException.getMessage());
+                });*/
+                Logger.d(apolloException.getLocalizedMessage());
             }
         });
     }
@@ -136,11 +156,11 @@ public class ChatDialog extends Dialog {
         this.progressBar.setVisibility(View.VISIBLE);
 
 
-        ApolloClientUtils.INSTANCE.setupApollo(dataManager.getAccessToken()).query(ChatMessagesQuery.builder().log_id(dataManager.getLogId()).build()).enqueue(new Callback<ChatMessagesQuery.Data>() {
-            public void onResponse(Response<ChatMessagesQuery.Data> response) {
+        ApolloClientUtils.INSTANCE.setupApollo(dataManager.getAccessToken()).query(BusinessTripChatMessagesQuery.builder().log_id(dataManager.getLogId()).user_id("0").is_direct(false).build()).enqueue(new Callback<BusinessTripChatMessagesQuery.Data>() {
+            public void onResponse(Response<BusinessTripChatMessagesQuery.Data> response) {
 
                 if (!response.hasErrors()) {
-                    adapter.setMessages(response.data().chatMessages());
+                    adapter.setMessages(response.data().businessTripChatMessages());
 
 
                     c.runOnUiThread(new Runnable() {
@@ -217,6 +237,15 @@ public class ChatDialog extends Dialog {
             }
 
             public void onEvent(final PusherEvent pusherEvent) {
+
+
+
+                BusinessTripChatMessagesQuery.BusinessTripChatMessage msg = ( BusinessTripChatMessagesQuery.BusinessTripChatMessage) new Gson().fromJson(new JsonParser().parse(pusherEvent.getData()),  BusinessTripChatMessagesQuery.BusinessTripChatMessage.class);
+                Logger.d(msg.sender().id() + "   =   " +dataManager.getUser().getId() );
+                if (msg.sender().id().equals(dataManager.getUser().getId()))
+                    return;
+
+
                 PrintStream printStream = System.out;
                 StringBuilder sb = new StringBuilder();
                 sb.append(" PusherEvent");
@@ -224,7 +253,7 @@ public class ChatDialog extends Dialog {
                 printStream.println(sb.toString());
                 c.runOnUiThread(new Runnable() {
                     public void run() {
-                        adapter.addItem((ChatMessage) new Gson().fromJson(new JsonParser().parse(pusherEvent.getData()), ChatMessage.class));
+                        adapter.addItem(( BusinessTripChatMessagesQuery.BusinessTripChatMessage) new Gson().fromJson(new JsonParser().parse(pusherEvent.getData()),  BusinessTripChatMessagesQuery.BusinessTripChatMessage.class));
                         adapter.notifyDataSetChanged();
                         recyclerView.scrollToPosition(adapter.getItemCount() - 1);
                     }

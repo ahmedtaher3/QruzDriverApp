@@ -14,15 +14,21 @@ public class StationUser {
 
     private String avatar;
 
+    private String secondary_no ;
+
     private boolean isPickedUp;
 
-    public StationUser(String id, String name, String email, String phone, String avatar, boolean isPickedUp) {
+
+
+
+    public StationUser(String id, String name, String email, String phone, String avatar, boolean isPickedUp, String secondary_no) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.avatar = avatar;
         this.isPickedUp = isPickedUp;
+        this.secondary_no = secondary_no;
     }
 
     public String getId() {
@@ -73,6 +79,14 @@ public class StationUser {
         this.isPickedUp = isPickedUp;
     }
 
+    public String getSecondary_no() {
+        return secondary_no;
+    }
+
+    public void setSecondary_no(String secondary_no) {
+        this.secondary_no = secondary_no;
+    }
+
     @Override
     public String toString() {
         return "StationUser{" +
@@ -82,6 +96,7 @@ public class StationUser {
                 ", phone='" + phone + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", isPickedUp=" + isPickedUp +
+                ", secondary_no='" + secondary_no + '\'' +
                 '}';
     }
 }

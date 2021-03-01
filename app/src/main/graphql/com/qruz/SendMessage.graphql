@@ -1,11 +1,11 @@
-mutation sendMesage($user_id:ID!,$log_id:String!,$message:String!){
-  sendChatMessage(input:{
-    sender_id: $user_id
-    sender_type: "App\\Driver"
-    trip_id: $log_id
-    trip_type: "App\\BusinessTrip"
-    message: $message
-  }) {
-    id
-  }
+mutation sendMesage($user_id:ID!,$trip_id:ID!,$log_id:String!,$message:String!){
+    sendBusinessTripChatMessage(input:{
+        sender_id: $user_id
+        sender_type: "App\\Driver"
+        trip_id: $trip_id
+        log_id: $log_id
+        message: $message
+    }) {
+        id
+    }
 }

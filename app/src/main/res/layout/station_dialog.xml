@@ -24,7 +24,9 @@
             android:layout_height="wrap_content"
             android:padding="10dp">
 
-            <Button
+             <Button
+                android:textStyle="bold"
+
                 android:id="@+id/stationSendNotification"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
@@ -46,7 +48,8 @@
             android:padding="10dp"
             android:weightSum="2">
 
-            <Button
+             <Button
+                android:textStyle="bold"
                 android:id="@+id/pickUsersButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -60,7 +63,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 
-            <Button
+             <Button
+                android:textStyle="bold"
                 android:id="@+id/DropUsersButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -81,11 +85,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/stationRecyclerView"
+
+            <LinearLayout
                 android:layout_width="match_parent"
+
                 android:layout_height="match_parent"
-                android:layout_above="@+id/done" />
+                android:layout_above="@+id/done"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/stationRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+            </LinearLayout>
+
 
             <ProgressBar
                 android:id="@+id/stationProgressBar"
@@ -101,9 +122,10 @@
                 android:layout_alignParentBottom="true"
                 android:padding="10dp">
 
-                <Button
+                 <Button
+                android:textStyle="bold"
                     android:id="@+id/stationDone"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/btn_gradient_background"

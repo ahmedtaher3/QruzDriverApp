@@ -1,0 +1,26 @@
+mutation CreateBusinessTripAttendance (
+    $trip_id: ID!,
+    $user_id: ID!,
+    $user_name: String!,
+    $is_absent: Boolean!,
+    $trip_name: String! ,
+    $log_id: String! ,
+    $latitude: String! ,
+    $longitude: String!
+    $driver_id: ID!
+){
+
+    changeBusinessTripAttendanceStatus(input: {
+        trip_id: $trip_id
+        user_id: $user_id
+        user_name: $user_name
+        is_absent: $is_absent
+        trip_name: $trip_name
+        log_id: $log_id
+        latitude: $latitude
+        longitude: $longitude
+        driver_id: $driver_id
+        by: "driver"
+    })
+
+}

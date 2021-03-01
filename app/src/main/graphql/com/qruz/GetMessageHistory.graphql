@@ -1,13 +1,16 @@
-query chatMessages ($log_id:String!) {
-  chatMessages(trip_id: $log_id, trip_type: "App\\BusinessTrip") {
+query BusinessTripChatMessages ($log_id: String! , $user_id: ID!, $is_direct: Boolean!){
+
+  businessTripChatMessages(log_id: $log_id ,user_id:$user_id , is_direct : $is_direct) {
     id
     message
-    created_at
     time
+    created_at
     sender {
       id
       name
     }
     sender_type
   }
+
+
 }

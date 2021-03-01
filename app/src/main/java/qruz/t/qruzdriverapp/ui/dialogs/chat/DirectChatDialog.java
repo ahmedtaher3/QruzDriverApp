@@ -1,0 +1,203 @@
+package qruz.t.qruzdriverapp.ui.dialogs.chat;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.apollographql.apollo.ApolloCall.Callback;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
+import com.google.firebase.crashlytics.internal.common.AbstractSpiCall;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import com.orhanobut.logger.Logger;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.PrivateChannel;
+import com.pusher.client.channel.PrivateChannelEventListener;
+import com.pusher.client.channel.PusherEvent;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
+import com.pusher.client.util.HttpAuthorizer;
+import com.qruz.BusinessTripChatMessagesQuery;
+import com.qruz.SendBusinessTripChatMessageMutation;
+import com.qruz.SendMesageMutation;
+import com.qruz.data.remote.ApolloClientUtils;
+
+import java.io.PrintStream;
+import java.util.HashMap;
+
+import qruz.t.qruzdriverapp.R;
+import qruz.t.qruzdriverapp.Utilities.CommonUtilities;
+import qruz.t.qruzdriverapp.base.BaseApplication;
+import qruz.t.qruzdriverapp.data.local.DataManager;
+import qruz.t.qruzdriverapp.model.StationUser;
+
+public class DirectChatDialog extends Dialog {
+    ChatAdapter adapter;
+    /* access modifiers changed from: private */
+    public Activity c;
+    private PrivateChannel ch;
+    EditText chat_msg;
+    public Dialog d;
+    DataManager dataManager;
+    ProgressBar progressBar;
+    RecyclerView recyclerView;
+    ImageView sendMsg;
+    ProgressBar sendMsgProgress;
+    StationUser model;
+    public DirectChatDialog(Activity activity ,  StationUser model) {
+        super(activity);
+        this.c = activity;
+        this.model = model;
+    }
+
+    /* access modifiers changed from: protected */
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+
+        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT);
+        setContentView(R.layout.chat_dialog);
+
+        dataManager = ((BaseApplication) this.c.getApplication()).getDataManager();
+        progressBar = (ProgressBar) findViewById(R.id.chatProgressBar);
+        sendMsgProgress = (ProgressBar) findViewById(R.id.sendMsgProgress);
+        recyclerView = (RecyclerView) findViewById(R.id.chatRecyclerView);
+        chat_msg = (EditText) findViewById(R.id.chat_msg);
+        sendMsg = (ImageView) findViewById(R.id.sendMsg);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(c));
+        adapter = new ChatAdapter(c, dataManager);
+
+
+        sendMsg.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(chat_msg.getText().toString())) {
+                    sendMsg(chat_msg.getText().toString());
+                }
+            }
+        });
+
+
+        getPreMsgs();
+    }
+
+    /* access modifiers changed from: 0000 */
+    public void sendMsg(String str) {
+
+        adapter.addItem(new BusinessTripChatMessagesQuery.BusinessTripChatMessage(
+                "",
+                "",
+                str,
+                CommonUtilities.convertToTime(System.currentTimeMillis()),
+                CommonUtilities.convertToTime(System.currentTimeMillis()),
+                new BusinessTripChatMessagesQuery.Sender(
+                        "",
+                        dataManager.getUser().getId(),
+                        dataManager.getUser().getName()
+                ),
+                "App\\Driver"));
+        adapter.notifyDataSetChanged();
+        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        chat_msg.setText("");
+
+        ApolloClientUtils.INSTANCE.setupApollo(this.dataManager.getAccessToken()).mutate(SendBusinessTripChatMessageMutation.builder()
+                .sender_id(dataManager.getUser().getId())
+                .recipient_id(model.getId())
+                .message(str)
+                .trip_id(dataManager.getTripId())
+                .log_id(dataManager.getLogId())
+                .build()).enqueue(new Callback<SendBusinessTripChatMessageMutation.Data>() {
+            public void onResponse(Response<SendBusinessTripChatMessageMutation.Data> response) {
+                Logger.d(response.errors());
+           /*     if (!response.hasErrors()) {
+                    c.runOnUiThread(new Runnable() {
+                        public void run() {
+                            sendMsgProgress.setVisibility(View.GONE);
+                            sendMsg.setVisibility(View.VISIBLE);
+                            chat_msg.setText("");
+                        }
+                    });
+                    return;
+                }
+                Logger.d("sendMsggg" + response.errors().get(0).message());
+                c.runOnUiThread(new Runnable() {
+                    public void run() {
+                        sendMsgProgress.setVisibility(View.GONE);
+                        sendMsg.setVisibility(View.VISIBLE);
+                        Toast.makeText(c, R.string.something_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                });*/
+            }
+
+            public void onFailure(ApolloException apolloException) {
+             /*   c.runOnUiThread(new Runnable() {
+                    public void run() {
+                        sendMsgProgress.setVisibility(View.GONE);
+                        sendMsg.setVisibility(View.VISIBLE);
+                        Toast.makeText(c, " sendMsg" + R.string.something_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                });*/
+                Logger.d(apolloException.getLocalizedMessage());
+            }
+        });
+    }
+
+    /* access modifiers changed from: 0000 */
+    public void getPreMsgs() {
+        this.progressBar.setVisibility(View.VISIBLE);
+
+
+        ApolloClientUtils.INSTANCE.setupApollo(dataManager.getAccessToken()).query(BusinessTripChatMessagesQuery.builder().log_id(dataManager.getLogId()).user_id(model.getId()).is_direct(true).build()).enqueue(new Callback<BusinessTripChatMessagesQuery.Data>() {
+            public void onResponse(Response<BusinessTripChatMessagesQuery.Data> response) {
+
+                if (!response.hasErrors()) {
+                    adapter.setMessages(response.data().businessTripChatMessages());
+
+
+                    c.runOnUiThread(new Runnable() {
+                        public void run() {
+
+                            recyclerView.setAdapter(adapter);
+                            progressBar.setVisibility(View.GONE);
+                            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                        }
+                    });
+                } else {
+                    c.runOnUiThread(new Runnable() {
+                        public void run() {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+
+                }
+
+            }
+
+            public void onFailure(ApolloException apolloException) {
+                Toast.makeText(c, R.string.something_wrong, Toast.LENGTH_SHORT).show();
+
+                c.runOnUiThread(new Runnable() {
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(c, R.string.something_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+}

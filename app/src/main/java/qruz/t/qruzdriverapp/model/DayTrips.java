@@ -6,12 +6,14 @@ public class DayTrips {
     private String name;
     private boolean selected;
     private boolean today;
+    private boolean visible;
 
-    public DayTrips(String fullName, String name, boolean selected, boolean today) {
+    public DayTrips(String fullName, String name, boolean selected, boolean today, boolean visible) {
         this.fullName = fullName;
         this.name = name;
         this.selected = selected;
         this.today = today;
+        this.visible = visible;
     }
 
     public String getFullName() {
@@ -44,5 +46,13 @@ public class DayTrips {
 
     public void setToday(boolean today) {
         this.today = today;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

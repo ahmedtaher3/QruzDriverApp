@@ -16,41 +16,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/screens_background"
+        android:gravity="center"
         android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="25dp"
-            app:cardElevation="0dp">
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-            <LinearLayout
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/partner_logo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/partner" />
+
+            <TextView
+                android:id="@+id/partner_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_marginStart="10dp"
+                android:text="VOLA AGENCY"
+                android:textColor="@color/blue_color"
+                android:textSize="18dp"
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="50dp"
-                    android:id="@+id/partner_logo"
-                    android:layout_height="50dp"
-                    android:src="@drawable/partner" />
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/partner_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VOLA AGENCY"
-                    android:textColor="@color/blue_color"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+        </LinearLayout>
 
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,7 +65,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Start time   :"
-                    android:textColor="@color/blue_color" />
+                    android:textColor="@color/blue_color"
+
+                    android:textStyle="bold" />
             </RelativeLayout>
 
 
@@ -84,7 +81,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="7:00 AM" />
+                    android:text="7:00 AM"
+
+                    android:textStyle="bold" />
             </RelativeLayout>
 
 
@@ -95,50 +94,7 @@
             android:layout_height="1dp"
             android:layout_gravity="center_horizontal"
             android:background="@color/edittext_hintColor" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp"
-            android:weightSum="2">
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="Total Seats   :"
-                    android:textColor="@color/blue_color" />
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/totalSeats"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="12" />
-            </RelativeLayout>
-
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="100dp"
-            android:layout_height="1dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/edittext_hintColor" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -158,7 +114,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Trip Type   :"
-                    android:textColor="@color/blue_color" />
+                    android:textColor="@color/blue_color"
+
+                    android:textStyle="bold" />
             </RelativeLayout>
 
 
@@ -171,7 +129,9 @@
                     android:id="@+id/tripType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"  />
+                    android:layout_marginStart="10dp"
+
+                    android:textStyle="bold" />
             </RelativeLayout>
 
 

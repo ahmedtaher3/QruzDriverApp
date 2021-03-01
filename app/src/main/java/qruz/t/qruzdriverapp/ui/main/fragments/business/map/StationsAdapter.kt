@@ -3,23 +3,34 @@ package qruz.t.qruzdriverapp.ui.main.fragments.business.map
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.model.LatLng
+import com.orhanobut.logger.Logger
 import qruz.t.qruzdriverapp.R
 import qruz.t.qruzdriverapp.Utilities.CommonUtilities
+import qruz.t.qruzdriverapp.model.DriverTrips
 import qruz.t.qruzdriverapp.model.Station
 import qruz.t.qruzdriverapp.ui.dialogs.startion.StationDialog
 import java.util.*
 
 class StationsAdapter(
-    private var stations: ArrayList<Station>
-    , private var context: Activity
-) :
-    RecyclerView.Adapter<StationsAdapter.StationViewHolder>() {
+    private var stations: ArrayList<Station>,
+    private var onStationClick: OnStationClick
+) : RecyclerView.Adapter<StationsAdapter.StationViewHolder>() {
+
+    private var itemsCopy = ArrayList<Station>()
+
+
+    interface OnStationClick {
+        fun setOnStationClick(station: Station)
+
+    }
 
 
     override fun onCreateViewHolder(
@@ -43,17 +54,26 @@ class StationsAdapter(
             viewHolder.stationStartAt.text = CommonUtilities.convertToTime(model.date.toLong())
 
         }
-        viewHolder.seats.text = model.users.toString() + " " + "Seats"
+
+        if (model.users == 0)
+        {
+            viewHolder.seats.text =  " No Seats"
+
+        }
+
+        else if (model.users == 0){
+            viewHolder.seats.text = model.users.toString() + " " + "Seats"
+
+        }
+        else
+        {
+            viewHolder.seats.text = model.users.toString() + " " + "Seat"
+
+        }
 
         viewHolder.itemView.setOnClickListener(View.OnClickListener {
+            onStationClick.setOnStationClick(model)
 
-            val cdd = StationDialog(context, model.id, null)
-            com.orhanobut.logger.Logger.d(model.id)
-            cdd.setCanceledOnTouchOutside(true)
-            cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-            cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            cdd.show()
 
         })
     }
@@ -64,6 +84,8 @@ class StationsAdapter(
 
     fun setTrips(users: ArrayList<Station>) {
         this.stations = users
+        this.itemsCopy.addAll(users)
+
         try {
             notifyDataSetChanged()
 
@@ -92,6 +114,29 @@ class StationsAdapter(
 
         }
 
+    }
+
+
+    fun filter(text: String) {
+        this.stations.clear()
+
+
+
+        if (text.isEmpty()) {
+            this.stations.addAll(itemsCopy)
+        } else {
+
+
+            for (model in itemsCopy) {
+                Logger.d(model.name + "\n" + text)
+                if (model.name.contains(text, ignoreCase = true)) {
+                    stations.add(model)
+                }
+
+            }
+
+        }
+        notifyDataSetChanged()
     }
 
 

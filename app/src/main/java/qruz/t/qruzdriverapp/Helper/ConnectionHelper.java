@@ -19,8 +19,8 @@ public class ConnectionHelper {
         if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
             return true;
         } else {
-            //Toast.makeText(context, "Oops ! Connect your Internet", Toast.LENGTH_LONG).show();
-            return false;
+             //Toast.makeText(context, "Oops ! Connect your Internet", Toast.LENGTH_LONG).show();
+             return false;
         }
 
     }

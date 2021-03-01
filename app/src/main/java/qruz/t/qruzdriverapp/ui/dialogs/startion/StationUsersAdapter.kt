@@ -17,19 +17,27 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.orhanobut.logger.Logger
 import qruz.t.qruzdriverapp.R
+import qruz.t.qruzdriverapp.model.DriverTrips
 import qruz.t.qruzdriverapp.model.StationUser
 import java.util.*
 
 
 class StationUsersAdapter(
     private var users: ArrayList<StationUser>,
-    private var context: Activity
+    private var context: Activity,
+    private var onPhonesClick: OnPhonesClick
 ) :
     RecyclerView.Adapter<StationUsersAdapter.StationViewHolder>() {
 
     private var textStatus = 1
+    private var itemsCopy = ArrayList<StationUser>()
 
 
+
+    interface OnPhonesClick{
+        fun setOnPhonesClick(model:StationUser)
+        fun setOnChatClick(model:StationUser)
+    }
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
@@ -49,6 +57,15 @@ class StationUsersAdapter(
         viewHolder.isPickedUp.tag = this
         viewHolder.name.text = model.name
 
+        if (model.secondary_no.isNullOrEmpty())
+        {
+            viewHolder.additional_numbers.visibility = View.GONE
+        }
+        else
+        {
+            viewHolder.additional_numbers.visibility = View.VISIBLE
+
+        }
 
         viewHolder.isPickedUp.setOnClickListener(View.OnClickListener {
 
@@ -83,6 +100,18 @@ class StationUsersAdapter(
             }
 
         })
+
+        viewHolder.additional_numbers.setOnClickListener(View.OnClickListener {
+
+            onPhonesClick.setOnPhonesClick(model)
+
+        })
+
+        viewHolder.chat.setOnClickListener(View.OnClickListener {
+
+            onPhonesClick.setOnChatClick(model)
+
+        })
     }
 
     override fun getItemCount(): Int {
@@ -91,6 +120,7 @@ class StationUsersAdapter(
 
     fun setUsers(users: ArrayList<StationUser>) {
         this.users = users
+        this.itemsCopy.addAll(users)
 
         context.runOnUiThread(Runnable {
             notifyDataSetChanged()
@@ -112,12 +142,16 @@ class StationUsersAdapter(
         public val name: TextView
         public val isPickedUp: CheckBox
         public val station_item_call: RelativeLayout
+        public val additional_numbers: RelativeLayout
+        public val chat: RelativeLayout
 
 
         init {
             name = parent.findViewById(R.id.station_item_name)
             isPickedUp = parent.findViewById(R.id.station_item_picked_up_check_box)
             station_item_call = parent.findViewById(R.id.station_item_call)
+            additional_numbers = parent.findViewById(R.id.additional_numbers)
+            chat = parent.findViewById(R.id.chat)
         }
 
 
@@ -132,4 +166,29 @@ class StationUsersAdapter(
     fun getTextStatus(): Int {
         return this.textStatus
     }
+
+
+    fun filter(text: String) {
+         this.users.clear()
+
+
+
+        if (text.isEmpty()) {
+             this.users.addAll(itemsCopy)
+        } else {
+
+
+
+            for (model in itemsCopy) {
+                Logger.d(model.name+"\n" + text)
+                if (model.name.contains(text, ignoreCase = true)) {
+                    users.add(model)
+                }
+
+            }
+
+        }
+        notifyDataSetChanged()
+    }
+
 }

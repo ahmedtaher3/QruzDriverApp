@@ -480,7 +480,7 @@
     <string name="total_seats">Total seats</string>
     <string name="trip">Trip</string>
     <string name="trip_detail">Trip Detail</string>
-    <string name="trip_details">Trip Details</string>
+    <string name="trip_details">Trip Stations</string>
     <string name="trip_type">Trip Type</string>
     <string name="try_later">Later</string>
     <string name="type">Model</string>
@@ -528,4 +528,5 @@
     <string name="your_wallet_amount">Your wallet amount is</string>
     <string name="drop_off">Drop Off</string>
     <string name="today">Today</string>
+    <string name="no_trips_today">No Trips</string>
 </resources>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -14,11 +12,80 @@
         android:orientation="vertical"
         android:tag="layout/fragment_business_0">
 
+        <!-- <androidx.appcompat.widget.SearchView
+             android:id="@+id/searchView"
+             android:layout_margin="10dp"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"/>-->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/daysRecycler"
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/upcomingPastLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="15dp"
+            android:weightSum="2">
+
+            <RelativeLayout
+                android:id="@+id/upcomingLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/blue_background"
+                android:gravity="center_vertical"
+                android:padding="10dp">
+
+
+                <TextView
+                    android:id="@+id/one_time_text_view"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Upcoming"
+
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/PastLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/white_background"
+                android:gravity="center_vertical"
+                android:padding="10dp">
+
+
+                <TextView
+                    android:id="@+id/daily_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Past"
+
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -34,6 +101,32 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_centerInParent="true" />
+
+            <LinearLayout
+                android:id="@+id/emptyLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/empty" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/no_trips_today"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
         </RelativeLayout>
+
     </LinearLayout>
 </layout>

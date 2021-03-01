@@ -1,4 +1,4 @@
-query DriverTrips($id: ID!,  $day: String){
+query DriverTrips($id: ID!,  $day: String!){
 
     driverTrips(driver_id: $id,  day: $day) {
 
@@ -15,15 +15,6 @@ query DriverTrips($id: ID!,  $day: String){
             name
             logo
         }
-
-          stations {
-                    id
-
-                    users {
-                        id
-
-                    }
-                }
 
 
     }

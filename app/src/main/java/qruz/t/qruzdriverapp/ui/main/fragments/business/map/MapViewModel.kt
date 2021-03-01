@@ -66,7 +66,23 @@ class MapViewModel (application: Application) : AndroidViewModel(application) {
             })
     }
 
+    public fun updateBusinessTripDriverLocation(lat: String , long: String) {
 
+
+        ApolloClientUtils.setupApollo(dataManager.accessToken)?.mutate(UpdateBusinessTripDriverLocationMutation.builder().trip_id(dataManager.tripId).log_id(dataManager.logId).latitude(lat).longitude(long).build())
+            ?.enqueue(object : ApolloCall.Callback<UpdateBusinessTripDriverLocationMutation.Data>() {
+                override fun onFailure(e: ApolloException) {
+
+
+                }
+
+                override fun onResponse(response: Response<UpdateBusinessTripDriverLocationMutation.Data>) {
+
+                    Logger.d("doneee")
+
+                }
+            })
+    }
 
     public fun endTrip(tripId: String, log_id: String  , lat: String , long: String) {
 

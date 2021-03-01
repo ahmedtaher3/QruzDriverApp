@@ -39,17 +39,17 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/driverImage"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
                         android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
 
-                    <TextView
+                     <TextView
+            android:textStyle="bold"
                         android:id="@+id/driverName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ahmed Taher"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textColor="@color/white" />
                 </LinearLayout>
             </RelativeLayout>
 
@@ -78,14 +78,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_setting" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/update_profile"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp"  />
                     </LinearLayout>
 
                     <LinearLayout
@@ -102,14 +102,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_my_trips" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/my_trips"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp"  />
                     </LinearLayout>
 
                     <LinearLayout
@@ -127,14 +127,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_cash_usd_outline_black_36dp" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/earnings"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp"  />
                     </LinearLayout>
 
                     <LinearLayout
@@ -152,14 +152,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_file_chart_black_36dp" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/summary"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp"  />
                     </LinearLayout>
 
                     <LinearLayout
@@ -176,14 +176,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_setting" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/change_language"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -191,6 +191,7 @@
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:orientation="horizontal"
+                        android:visibility="gone"
                         android:padding="10dp">
 
                         <ImageView
@@ -199,14 +200,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_share_variant_black_36dp" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/share"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -221,16 +222,17 @@
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_marginStart="20dp"
-                            android:src="@drawable/ic_logout" />
+                            android:tint="@color/black"
+                            android:src="@drawable/ic_password" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/change_password"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp"  />
                     </LinearLayout>
 
                     <LinearLayout
@@ -247,14 +249,14 @@
                             android:layout_marginStart="20dp"
                             android:src="@drawable/ic_logout" />
 
-                        <TextView
+                         <TextView
+            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:text="@string/logout"
                             android:textColor="@color/blue_color"
-                            android:textSize="20dp"
-                            android:textStyle="bold" />
+                            android:textSize="20dp" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>

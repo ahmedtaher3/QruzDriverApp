@@ -168,10 +168,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
             }
 
             R.id.account -> {
+
+
                 if (!active.equals("ProfileFragment")) {
                     replace_fragment(ProfileFragment(), "")
                     active = "ProfileFragment"
+                } else {
+
+                    if (supportFragmentManager.backStackEntryCount > 1) {
+                        onBackPressed()
+                    }
+
                 }
+
 
             }
         }

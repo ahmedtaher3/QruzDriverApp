@@ -15,7 +15,7 @@
             <!--apply a border around button-->
 
             <!-- make the button corners rounded-->
-            <corners android:radius="50dp"/>
+            <corners android:radius="25dp"/>
         </shape>
     </item>
 </selector>

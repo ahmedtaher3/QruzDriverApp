@@ -1,4 +1,4 @@
-mutation  PickUsers ($trip_id: ID! , $log_id: String!, $latitude: String!, $longitude: String!, $users: [ID!]! ) {
+mutation  PickUsers ($trip_id: ID! , $log_id: String!, $latitude: String!, $longitude: String!, $trip_name: String!, $users: [UserObj!]! ) {
 
     pickUsers(input:{
         trip_id: $trip_id
@@ -6,5 +6,6 @@ mutation  PickUsers ($trip_id: ID! , $log_id: String!, $latitude: String!, $long
         latitude: $latitude
         longitude: $longitude
         users: $users
+        trip_name: $trip_name
     })
 }

@@ -22,12 +22,14 @@ import qruz.t.qruzdriverapp.base.BaseApplication
 import qruz.t.qruzdriverapp.data.Retrofit.ApiServices
 import qruz.t.qruzdriverapp.data.Retrofit.RetrofitClient
 import qruz.t.qruzdriverapp.data.local.DataManager
+import qruz.t.qruzdriverapp.model.DriverRetrofit
 import retrofit2.Retrofit
 import java.io.File
 
 class UpdateProfileViewModel(application: Application) : AndroidViewModel(application) {
     val dataManager: DataManager
     val responseLive: MutableLiveData<Response<UpdateDriverMutation.Data>>
+    val responseLiveDriver: MutableLiveData<DriverRetrofit>
     val progress: MutableLiveData<Int>
     var myAPI: ApiServices? = null
     var retrofit: Retrofit? = null
@@ -36,6 +38,7 @@ class UpdateProfileViewModel(application: Application) : AndroidViewModel(applic
 
         dataManager = (getApplication() as BaseApplication).dataManager!!
         responseLive = MutableLiveData<Response<UpdateDriverMutation.Data>>()
+        responseLiveDriver = MutableLiveData<DriverRetrofit>()
         progress = MutableLiveData<Int>()
 
         retrofit = RetrofitClient.getInstance()
@@ -71,23 +74,23 @@ class UpdateProfileViewModel(application: Application) : AndroidViewModel(applic
 
 
         val bodyFile: MultipartBody.Part = MultipartBody.Part.createFormData(
-            "image", file.getName(),
+            "avatar", file.getName(),
             RequestBody.create(MediaType.parse("multipart/form-data"), file)
         )
         val id: RequestBody =
             RequestBody.create(MediaType.parse("multipart/form-data"), dataManager.user.id)
 
         progress.postValue(1)
-        myAPI?.update_image("Sheet1", id, bodyFile)!!
+        myAPI?.update_image("Bearer " + dataManager.accessToken, id, bodyFile)!!
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : Observer<ResponseBody> {
+            .subscribe(object : Observer<DriverRetrofit> {
                 override fun onSubscribe(d: Disposable) {}
-                override fun onNext(data: ResponseBody) {
+                override fun onNext(data: DriverRetrofit) {
 
                     progress.postValue(0)
 
-
+                    responseLiveDriver.postValue(data)
                 }
 
                 override fun onError(e: Throwable) {

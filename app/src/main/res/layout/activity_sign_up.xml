@@ -101,7 +101,8 @@
                             android:paddingStart="50dp"
                             android:paddingEnd="50dp">
 
-                            <Button
+                             <Button
+                android:textStyle="bold"
                                 android:id="@+id/signUp"
                                 android:layout_width="match_parent"
                                 android:layout_height="45dp"
@@ -128,14 +129,14 @@
                             android:layout_centerInParent="true"
                             android:orientation="horizontal">
 
-                            <TextView
+                             <TextView
+            android:textStyle="bold"
                                 android:id="@+id/cancel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:text="@string/cancel"
-                                android:textColor="@color/colorPrimaryDark"
-                                android:textStyle="bold" />
+                                android:textColor="@color/colorPrimaryDark"  />
                         </LinearLayout>
                     </RelativeLayout>
 

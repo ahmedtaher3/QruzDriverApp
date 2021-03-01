@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_map.view.*
 import qruz.t.qruzdriverapp.R
@@ -29,6 +31,7 @@ import qruz.t.qruzdriverapp.Utilities.CommonUtilities.getCustomImagePath
 import qruz.t.qruzdriverapp.base.BaseFragment
 import qruz.t.qruzdriverapp.databinding.FragmentChangePasswordBinding
 import qruz.t.qruzdriverapp.databinding.FragmentUpdateProfileBinding
+import qruz.t.qruzdriverapp.model.User
 import java.io.File
 
 /**
@@ -52,12 +55,13 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+        Glide.with(baseActivity).load(viewModel?.dataManager?.user?.avatar).placeholder(R.drawable.com_facebook_profile_picture_blank_portrait)
+            .into(binding?.image!!)
+
         binding.currentName.setText(viewModel.dataManager.user.name.toString())
         try {
             binding.currentEmail.setText(viewModel.dataManager.user.email.toString())
-        }
-        catch (e:Exception)
-        {
+        } catch (e: Exception) {
 
         }
         binding.currentPhone.setText(viewModel.dataManager.user.phone.toString())
@@ -109,8 +113,47 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
         viewModel.responseLive.observe(viewLifecycleOwner, Observer {
 
 
-        })
+            if (!it.hasErrors())
+            {
+                Logger.d(" aaaaa "+it.data()?.updateDriver().toString())
 
+
+                var user = viewModel.dataManager.user
+                user.id = it.data()?.updateDriver()?.id().toString()
+                user.name = it.data()?.updateDriver()?.name()
+                user.email = it.data()?.updateDriver()?.email()
+                user.phone = it.data()?.updateDriver()?.phone()
+
+
+                val gson = Gson()
+                val json = gson.toJson(user)
+                viewModel?.dataManager?.saveUser(json)
+            }
+            else
+            {
+                Toast.makeText(
+                    baseActivity,
+                   "Error",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+
+
+
+
+        })
+        viewModel.responseLiveDriver.observe(viewLifecycleOwner, Observer {
+
+
+            var user = viewModel.dataManager.user
+            user.avatar = it?.avatar
+            val gson = Gson()
+            val json = gson.toJson(user)
+            viewModel?.dataManager?.saveUser(json)
+
+
+        })
 
         viewModel?.progress?.observe(viewLifecycleOwner, Observer { progress ->
 
@@ -165,7 +208,6 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
     fun requestCameraPermission() {
 
 
-
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 baseActivity,
                 Manifest.permission.CAMERA
@@ -212,7 +254,7 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
 
         val camera = dialogView.findViewById<LinearLayout>(R.id.camera)
         val gallery = dialogView.findViewById<LinearLayout>(R.id.gallery)
-        val cancel = dialogView.findViewById<TextView>(R.id.cancel)
+        val cancel = dialogView.findViewById <TextView>(R.id.cancel)
 
         val alertDialog = dialogBuilder.create()
 

@@ -8,7 +8,7 @@ query BusinessTripSubscribers ($trip_id: ID, $station_id: ID, $status: String! )
         phone
         avatar
         is_picked_up
-        is_arrived
+        secondary_no
     }
 
 }

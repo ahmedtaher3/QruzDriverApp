@@ -1,27 +1,19 @@
 package qruz.t.qruzdriverapp.Utilities;
 
-import android.Manifest;
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.provider.Settings;
 
 import androidx.annotation.Nullable;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.google.android.gms.location.LocationListener;
 import com.orhanobut.logger.Logger;
-import com.qruz.UpdateDriverLocationMutation;
+
 import com.qruz.data.remote.ApolloClientUtils;
 
 import org.jetbrains.annotations.NotNull;
+
+
 
 import qruz.t.qruzdriverapp.base.BaseApplication;
 import qruz.t.qruzdriverapp.data.local.DataManager;
@@ -30,8 +22,8 @@ import qruz.t.qruzdriverapp.data.local.DataManager;
 /**
  * Created by filipp on 6/16/2016.
  */
-public class GPS_Service extends Service {
-
+public class GPS_Service  {
+/*
     private LocationListener listener;
     private LocationManager locationManager;
     private DataManager dataManager;
@@ -105,6 +97,6 @@ public class GPS_Service extends Service {
                 Logger.d(e.getMessage());
             }
         });
-    }
+    }*/
 
 }

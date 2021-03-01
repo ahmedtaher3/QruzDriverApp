@@ -1,0 +1,11 @@
+query BusinessTripAttendance ($trip_id: ID!){
+
+    businessTripAttendance(trip_id: $trip_id) {
+        id
+        name
+        phone
+        avatar
+        is_absent
+    }
+
+}

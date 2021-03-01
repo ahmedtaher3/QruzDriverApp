@@ -33,7 +33,8 @@
 
         <!-- Skip Button-->
 
-        <TextView
+         <TextView
+            android:textStyle="bold"
             android:textAllCaps="true"
             android:id="@+id/skip"
             android:layout_width="match_parent"

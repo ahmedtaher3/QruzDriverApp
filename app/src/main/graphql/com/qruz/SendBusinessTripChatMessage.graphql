@@ -1,0 +1,16 @@
+mutation SendBusinessTripChatMessage ($sender_id: ID!,$trip_id: ID!,$log_id: String!, $message: String!, $recipient_id: ID!){
+
+    sendBusinessTripChatMessage(input: {sender_id: $sender_id
+        sender_type: "App\\Driver"
+        log_id: $log_id
+        trip_id : $trip_id
+        recipient_id : $recipient_id
+        message : $message
+    })
+    {
+        id
+        message
+        time
+    }
+
+}

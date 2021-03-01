@@ -528,4 +528,5 @@
     <string name="your_wallet_amount">رصيدك بالمحفظة هو </string>
     <string name="drop_off">إنزال</string>
     <string name="today">اليوم</string>
+    <string name="no_trips_today">لا يوجد رحلات اليوم</string>
 </resources>

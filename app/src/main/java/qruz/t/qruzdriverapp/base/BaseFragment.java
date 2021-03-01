@@ -13,11 +13,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
-
-import qruz.t.qruzdriverapp.R;
-
 public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     private BaseActivity mActivity;
@@ -47,8 +42,7 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Mapbox.getInstance(mActivity, getString(R.string.mapbox_access_token));
-         mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
+        mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
         mRootView = mViewDataBinding.getRoot();
         return mRootView;
     }
@@ -85,8 +79,6 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     public boolean isNetworkConnected() {
         return mActivity != null && mActivity.isNetworkConnected();
     }
-
-
 
 
     public interface Callback {

@@ -20,7 +20,6 @@ class BusinessViewHolder(private val parent: View) : RecyclerView.ViewHolder(par
     private var fragmentManager: FragmentManager? = null
 
     private val name: TextView
-    private val totalSeats: TextView
     private val startsAt: TextView
     private val tripType: TextView
     private val logo: CircleImageView
@@ -35,7 +34,9 @@ class BusinessViewHolder(private val parent: View) : RecyclerView.ViewHolder(par
         parent.tag = this
         name.text = trip.name
         startsAt.text = trip.startsAt
-        totalSeats.text = trip.userCount
+
+        if (trip.isReturn == null)
+            trip.isReturn = false
 
         if (trip.isReturn) {
             tripType.text = "Return"
@@ -46,8 +47,20 @@ class BusinessViewHolder(private val parent: View) : RecyclerView.ViewHolder(par
 
         this.requestManager?.load(trip.partner.logo)?.placeholder(logo.drawable)?.into(logo)
 
+
+
+        if (trip.flag == null)
+            trip.flag = false
+
+        if (trip.startsAt == null)
+            trip.startsAt = ""
+
         parent.setOnClickListener(View.OnClickListener {
-            replace_fragment(fragmentManager, MapFragment.newInstance(trip.flag , trip.id, trip.startsAt), "MapFragment")
+            replace_fragment(
+                fragmentManager,
+                MapFragment.newInstance(trip.flag, trip.id, trip.startsAt),
+                "MapFragment"
+            )
 
         })
 
@@ -55,7 +68,6 @@ class BusinessViewHolder(private val parent: View) : RecyclerView.ViewHolder(par
     }
 
     init {
-        totalSeats = parent.findViewById(R.id.totalSeats)
         name = parent.findViewById(R.id.partner_name)
         logo = parent.findViewById(R.id.partner_logo)
         startsAt = parent.findViewById(R.id.partner_startsAt)

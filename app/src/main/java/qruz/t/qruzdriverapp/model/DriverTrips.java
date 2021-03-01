@@ -3,7 +3,7 @@ package qruz.t.qruzdriverapp.model;
 public class DriverTrips {
     private String date;
     private String dayName;
-    private Boolean flag;
+    private Boolean flag = false;
     private String id;
     private Boolean isReturn;
     private String name;
