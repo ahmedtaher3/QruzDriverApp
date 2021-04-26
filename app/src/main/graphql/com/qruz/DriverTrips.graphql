@@ -7,7 +7,6 @@ query DriverTrips($id: ID!,  $day: String!){
         dayName
         date
         startsAt
-        flag
         isReturn
         partner
         {

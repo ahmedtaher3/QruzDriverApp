@@ -51,5 +51,10 @@
       <option name="name" value="maven4" />
       <option name="url" value="file:/$PROJECT_DIR$/../../../New%20folder/AndroidStudioProjects/QruzDriverApp/app/mint-plugin-repo-5.1.0/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven4" />
+      <option name="name" value="maven4" />
+      <option name="url" value="file:/$PROJECT_DIR$/app/mint-plugin-repo-5.1.0/" />
+    </remote-repository>
   </component>
 </project>

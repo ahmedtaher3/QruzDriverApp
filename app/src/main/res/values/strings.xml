@@ -226,7 +226,7 @@
     <string name="go_offline">GO OFFLINE</string>
     <string name="go_online">Go Online</string>
     <string name="google_login">Google login failed</string>
-    <string name="google_map_api">AIzaSyDEFGfuD0KTwcvq5UDXJ7lRniKFvyfpo7g</string>
+    <string name="google_map_api">AIzaSyA0a4_5jHzBStit_c4_ZM7TPTCO-uNLfoM</string>
     <string name="google_maps_key">AIzaSyBtCSwehQfoAdYemxDzJrKInCYafq83e6g</string>
     <string name="google_name">Google</string>
     <string name="group">Group</string>
@@ -427,7 +427,7 @@
     <string name="selected_option">Economy</string>
     <string name="selected_payment_mode">Cash</string>
     <string name="send">Send</string>
-    <string name="send_notification">Send Notification</string>
+    <string name="send_notification">Send Nearby Notification</string>
     <string name="server">Server is temporarily unavailable.! Please check later.</string>
     <string name="server_down">Unable to reach server.</string>
     <string name="service">Service</string>
@@ -529,4 +529,19 @@
     <string name="drop_off">Drop Off</string>
     <string name="today">Today</string>
     <string name="no_trips_today">No Trips</string>
+    <string name="duration">Duration :</string>
+    <string name="total_distance">Distance :</string>
+    <string name="km"> km </string>
+    <string name="munites"> min </string>
+    <string name="notification_sent">Notification sent</string>
+    <string name="already_sent">Notification already sent</string>
+    <string name="absent">Absent</string>
+    <string name="present">Present</string>
+    <string name="no_seats">No Seats</string>
+    <string name="seats">Seats</string>
+    <string name="seat">Seat</string>
+    <string name="enter_msg">write message here</string>
+    <string name="r_u_sre">Are You Sure?</string>
+    <string name="cant_end">you cant end trip before spending trip duration</string>
+    <string name="default_notification_channel_id">DEFAULT NOTIFICATION CHANNEL ID</string>
 </resources>

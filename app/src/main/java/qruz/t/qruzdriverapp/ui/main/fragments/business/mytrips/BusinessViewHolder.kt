@@ -58,7 +58,7 @@ class BusinessViewHolder(private val parent: View) : RecyclerView.ViewHolder(par
         parent.setOnClickListener(View.OnClickListener {
             replace_fragment(
                 fragmentManager,
-                MapFragment.newInstance(trip.flag, trip.id, trip.startsAt),
+                MapFragment.newInstance( trip.id, trip.startsAt , trip.date.toLong()),
                 "MapFragment"
             )
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.qruz.BusinessTripChatMessagesQuery
 import de.hdodenhof.circleimageview.CircleImageView
 import qruz.t.qruzdriverapp.R
@@ -76,6 +77,8 @@ class ChatAdapter(
         } else {
             viewHolder.msg_user_name?.visibility = View.VISIBLE
         }
+
+
 
 
     }

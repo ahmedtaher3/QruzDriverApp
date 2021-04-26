@@ -1,13 +1,14 @@
-mutation UpdateDriver ($id: ID! ,$name: String! ,$phone: String! ,$email: String!){
-     updateDriver(input:{
-       id: $id
-       name: $name
-       phone: $phone
-       email: $email
-     }){
-         id
-         name
-         email
-         phone
-     }
+mutation UpdateDriver ($id: ID! ,$name: String ,$phone: String ,$email: String,$device_id: String){
+    updateDriver(input:{
+        id: $id
+        name: $name
+        phone: $phone
+        email: $email
+        device_id: $device_id
+    }){
+        id
+        name
+        email
+        phone
+    }
 }

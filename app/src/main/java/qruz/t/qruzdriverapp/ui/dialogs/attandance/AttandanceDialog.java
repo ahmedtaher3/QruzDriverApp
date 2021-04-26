@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -106,8 +107,7 @@ public class AttandanceDialog extends Dialog implements AttandanceAdapter.OnChan
 
     /* access modifiers changed from: 0000 */
     public void setStatus(Boolean status, String userName, String userid) {
-        progressBar.setVisibility(View.GONE);
-        Logger.d(tripID + "  "+ status + "  "+tripName +"  "+ userid+"  "+ CommonUtilities.convertToDate(System.currentTimeMillis()));
+        CommonUtilities.showStaticDialog(c);
 
 
         ApolloClientUtils.INSTANCE.setupApollo(this.dataManager.getAccessToken()).mutate(CreateBusinessTripAttendanceMutation.builder()
@@ -122,26 +122,17 @@ public class AttandanceDialog extends Dialog implements AttandanceAdapter.OnChan
                 .user_name(userName)
                 .build()).enqueue(new Callback<CreateBusinessTripAttendanceMutation.Data>() {
             public void onResponse(Response<CreateBusinessTripAttendanceMutation.Data> response) {
-                Logger.d(response.data());
 
-                c.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
+
+                CommonUtilities.hideDialog();
 
             }
 
             public void onFailure(ApolloException apolloException) {
-                Logger.d(apolloException.getCause());
+                Toast.makeText(c, c.getResources().getText(R.string.connection_error), Toast.LENGTH_SHORT).show();
 
-                c.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
+                CommonUtilities.hideDialog();
+
             }
         });
     }

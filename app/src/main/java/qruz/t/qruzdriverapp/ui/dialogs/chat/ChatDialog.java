@@ -19,8 +19,6 @@ import com.apollographql.apollo.ApolloCall.Callback;
 import com.apollographql.apollo.api.Error;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import com.google.firebase.crashlytics.internal.common.AbstractSpiCall;
-import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.orhanobut.logger.Logger;
@@ -198,7 +196,7 @@ public class ChatDialog extends Dialog {
     public void pusher() {
         HttpAuthorizer httpAuthorizer = new HttpAuthorizer("https://qruz.xyz/broadcasting/auth");
         HashMap hashMap = new HashMap();
-        hashMap.put(AbstractSpiCall.HEADER_ACCEPT, "application/json");
+        hashMap.put("Accept", "application/json");
         StringBuilder sb = new StringBuilder();
         sb.append("Bearer ");
         sb.append(this.dataManager.getAccessToken());

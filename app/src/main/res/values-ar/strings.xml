@@ -56,7 +56,7 @@
     <string name="cab">Cab</string>
     <string name="call">CALL</string>
     <string name="call_btn">Call</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">إلغاء</string>
     <string name="cancel_confirm">Are you sure you want to cancel the ride?</string>
     <string name="cancel_ride">Cancel ride</string>
     <string name="cancel_ride_alert">Are you sure want to cancel the Service?</string>
@@ -140,7 +140,7 @@
     <string name="connect_to_network">Connect to network or quit</string>
     <string name="connect_to_wifi">Connect to WIFI</string>
     <string name="connect_with_social_media">Or connect with social</string>
-    <string name="connection_error">connection error</string>
+    <string name="connection_error">حدث خطأ ما</string>
     <string name="continue_with_facebook">Continue with Facebook</string>
     <string name="couponHistory">Coupon history</string>
     <string name="coupon_added">Coupon applied successfully</string>
@@ -157,7 +157,7 @@
     <string name="distance_price">Distance fare</string>
     <string name="distance_travelled">Distance Travelled</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
-    <string name="done">Done</string>
+    <string name="done">تم</string>
     <string name="driver_busy">Your trip was cancelled by the driver.Please contact us for support</string>
     <string name="drop_address">Drop Address</string>
     <string name="drop_at">Drop Location</string>
@@ -226,7 +226,7 @@
     <string name="go_offline">GO OFFLINE</string>
     <string name="go_online">Go Online</string>
     <string name="google_login">Google login failed</string>
-    <string name="google_map_api">AIzaSyDEFGfuD0KTwcvq5UDXJ7lRniKFvyfpo7g</string>
+    <string name="google_map_api">AIzaSyA0a4_5jHzBStit_c4_ZM7TPTCO-uNLfoM</string>
     <string name="google_maps_key">AIzaSyBtCSwehQfoAdYemxDzJrKInCYafq83e6g</string>
     <string name="google_name">Google</string>
     <string name="group">Group</string>
@@ -270,7 +270,7 @@
     <string name="messenger_send_button_text">Send</string>
     <string name="meters">m</string>
     <string name="miles">mi</string>
-    <string name="min">min</string>
+    <string name="min">دقيقة</string>
     <string name="mobile">Mobile Number</string>
     <string name="mobile_no">9876543210</string>
     <string name="mobile_number_empty">Mobile number required.</string>
@@ -520,7 +520,7 @@
     <string name="where_to_go">Where to go?</string>
     <string name="work_location">Work</string>
     <string name="write_your_comment">Write your comments</string>
-    <string name="yes">Yes</string>
+    <string name="yes">نعم</string>
     <string name="you_are_offline">You Are Offline</string>
     <string name="you_are_online">You Are Online</string>
     <string name="your_cards">Your Cards</string>
@@ -529,4 +529,20 @@
     <string name="drop_off">إنزال</string>
     <string name="today">اليوم</string>
     <string name="no_trips_today">لا يوجد رحلات اليوم</string>
+    <string name="duration">المدة :</string>
+    <string name="total_distance">المسافة :</string>
+    <string name="km">  ك/م  </string>
+    <string name="munites">  دقيقة  </string>
+    <string name="notification_sent">تم إرسال التنبيه</string>
+    <string name="already_sent">أرسلت تنبيه بالفعل</string>
+    <string name="absent">غائب</string>
+    <string name="present">حاضر</string>
+    <string name="no_seats">لا يوجد مقاعد</string>
+    <string name="seats">مقاعد</string>
+    <string name="seat">مقعد</string>
+    <string name="enter_msg">اكتب الرسالة هنا</string>
+    <string name="r_u_sre">هل أنت متأكد؟</string>
+    <string name="cant_end">لا يمكنك الإنهاء قبل مرور مدة الرحلة</string>
+    <string name="default_notification_channel_id">DEFAULT NOTIFICATION CHANNEL ID</string>
+
 </resources>

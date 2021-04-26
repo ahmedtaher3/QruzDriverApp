@@ -34,6 +34,16 @@ public class DataManager {
         return gson.fromJson(json, User.class);
     }
 
+    public void saveStartAtTime(Long user) {
+        mSharedPrefsHelper.putStartAtTime(user);
+    }
+
+    public Long getStartAtTime() {
+        return mSharedPrefsHelper.getStartAtTime();
+
+    }
+
+
     public void saveAccessToken(String accessToken) {
         mSharedPrefsHelper.putAccessToken(accessToken);
     }

@@ -3,10 +3,13 @@ package qruz.t.qruzdriverapp.ui.auth.splach;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.view.ViewCompat;
 
+
+import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,9 +22,13 @@ import qruz.t.qruzdriverapp.R;
 import qruz.t.qruzdriverapp.base.BaseActivity;
 import qruz.t.qruzdriverapp.databinding.ActivitySplashBinding;
 import qruz.t.qruzdriverapp.ui.auth.login.LoginActivity;
+import qruz.t.qruzdriverapp.ui.dialogs.chat.ChatActivity;
+import qruz.t.qruzdriverapp.ui.dialogs.chat.DirectChatActivity;
+import qruz.t.qruzdriverapp.ui.main.MainActivity;
 
 public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     private static final String TAG = "SplashActivity";
+    Bundle data;
     ActivitySplashBinding activitySplashBinding;
 
     @Override
@@ -33,7 +40,17 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activitySplashBinding = getViewDataBinding();
-        Single.timer(3000, TimeUnit.MILLISECONDS)
+
+        try {
+            data = getIntent().getExtras();
+        } catch (Exception e) {
+            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+
+        Single.timer(2000, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<Long>() {
@@ -46,10 +63,45 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
                     public void onSuccess(Long aLong) {
                         Log.d(TAG, "onSuccess: ");
 
-                        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                        startActivity(intent);
 
-                        finish();
+                        if (data != null) {
+
+
+                            if (data.getString("view").equals("BusinessTripGroupChat")) {
+
+
+
+
+                                Intent intent = new Intent(SplashActivity.this, ChatActivity.class);
+                                intent.putExtra("NAME", data.getString("title"));
+                                startActivity(intent);
+                                finish();
+                            } else if (data.getString("view").equals("BusinessTripDirectMessage")) {
+
+
+
+                                Intent intent = new Intent(SplashActivity.this, DirectChatActivity.class);
+                                intent.putExtra("NAME", data.getString("title"));
+                                intent.putExtra("ID", data.getString("sender_id"));
+                                startActivity(intent);
+                                finish();
+                            } else {
+
+
+
+                                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+
+                        } else {
+                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+
                     }
 
                     @Override
@@ -57,7 +109,6 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
 
                     }
                 });
-
 
     }
 

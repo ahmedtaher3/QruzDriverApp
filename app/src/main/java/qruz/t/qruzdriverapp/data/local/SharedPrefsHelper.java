@@ -37,6 +37,7 @@ public class SharedPrefsHelper {
     private static final String LOG_ID = "LOG_ID";
     private static final String TRIP_TYPE = "TRIP_TYPE";
     private static final String LANG = "LANG";
+    private static final String START_AT = "START_AT";
 
 
     private SharedPreferences mSharedPreferences;
@@ -126,6 +127,16 @@ public class SharedPrefsHelper {
 
     public String getLang() {
         return mSharedPreferences.getString(LANG, "en");
+
+    }
+
+
+    public void putStartAtTime(Long name) {
+        mSharedPreferences.edit().putLong(START_AT, name).apply();
+    }
+
+    public Long getStartAtTime() {
+        return mSharedPreferences.getLong(START_AT, 0);
 
     }
 }

@@ -29,11 +29,16 @@ class MapViewModel (application: Application) : AndroidViewModel(application) {
 
     public fun tripLiveTrip(driverID: String) {
         progress.postValue(1)
+
+        Logger.d(dataManager.accessToken + "      \n   "  + driverID)
+
         ApolloClientUtils.setupApollo(dataManager.accessToken)?.query(TripQuery.builder().id(driverID).build())
             ?.enqueue(object : ApolloCall.Callback<TripQuery.Data>() {
                 override fun onFailure(e: ApolloException) {
                     progress.postValue(0)
                     Logger.d(e.message)
+                    Logger.d(e.localizedMessage)
+                    Logger.d(e.cause)
 
                 }
 

@@ -86,9 +86,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                         replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
                     } else {
                         replace_fragment(
-                            MapFragment.newInstance(
-                                false, t.data()?.driverLiveTrip()?.tripID().toString(), "started"
-                            ), "BusinessFragment"
+                            MapFragment.newInstance(t.data()?.driverLiveTrip()?.tripID().toString(), "started"
+                                      ,  0  ), "BusinessFragment"
                         )
                     }
 
@@ -150,8 +149,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                             } else {
                                 replace_fragment(
                                     MapFragment.newInstance(
-                                        false, dataManager?.tripId!!, dataManager?.startAt!!
-                                    ), "BusinessFragment"
+                                          dataManager?.tripId!!, dataManager?.startAt!!
+                                   , 0 ), "BusinessFragment"
                                 )
                             }
                         } else {

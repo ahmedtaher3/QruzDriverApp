@@ -4,6 +4,9 @@ package qruz.t.qruzdriverapp.ui.main.fragments.business.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +14,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationManager
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -24,6 +28,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -33,7 +38,7 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
-import com.google.firebase.crashlytics.internal.common.AbstractSpiCall
+import com.google.android.material.snackbar.Snackbar
 import com.orhanobut.logger.Logger
 import com.pusher.client.Pusher
 import com.pusher.client.PusherOptions
@@ -41,12 +46,15 @@ import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
 import com.pusher.client.util.HttpAuthorizer
+import com.qruz.TripQuery
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import mumayank.com.airlocationlibrary.AirLocation
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import qruz.t.qruzdriverapp.Helper.DataParser
 import qruz.t.qruzdriverapp.R
@@ -56,12 +64,14 @@ import qruz.t.qruzdriverapp.base.BaseFragment
 import qruz.t.qruzdriverapp.databinding.FragmentMapBinding
 import qruz.t.qruzdriverapp.model.Station
 import qruz.t.qruzdriverapp.model.StationUser
+import qruz.t.qruzdriverapp.ui.auth.splach.SplashActivity
 import qruz.t.qruzdriverapp.ui.dialogs.attandance.AttandanceDialog
 import qruz.t.qruzdriverapp.ui.dialogs.chat.ChatDialog
 import qruz.t.qruzdriverapp.ui.dialogs.chat.DirectChatDialog
 import qruz.t.qruzdriverapp.ui.dialogs.startion.PhonesDialog
 import qruz.t.qruzdriverapp.ui.dialogs.startion.StationDialog
 import qruz.t.qruzdriverapp.ui.dialogs.startion.StationInterface
+import qruz.t.qruzdriverapp.ui.main.MainActivity
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -79,7 +89,7 @@ import kotlin.collections.ArrayList
 
 private const val ARG_START_AT = "startAt"
 private const val ARG_TRIP_ID = "tripId"
-private const val ARG_STATUS = "status"
+private const val ARG_DATE = "date"
 
 
 /**
@@ -94,8 +104,9 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
     var startAt = ""
     var tripId = "0"
-    var status = false
+    var date: Long = 0
     var counter = 0
+    var startAtTime = 0
     private lateinit var airLocation: AirLocation
 
 
@@ -126,13 +137,15 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
     var group_chat = false
 
+    var model: TripQuery.Trip? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         baseActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         arguments?.let {
-            status = it.getBoolean(ARG_STATUS)
             startAt = it.getString(ARG_START_AT).toString()
             tripId = it.getString(ARG_TRIP_ID).toString()
+            date = it.getLong(ARG_DATE)
 
 
         }
@@ -203,7 +216,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         }
 
 
-        adapter = StationsAdapter(ArrayList(), this)
+        adapter = StationsAdapter(baseActivity, ArrayList(), this)
         binding.stations.adapter = adapter
 
 
@@ -280,12 +293,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(status: Boolean, tripId: String, startAt: String) =
+        fun newInstance(tripId: String, startAt: String, date: Long) =
             MapFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_START_AT, startAt)
                     putString(ARG_TRIP_ID, tripId)
-                    putBoolean(ARG_STATUS, status)
+                    putLong(ARG_DATE, date)
                 }
             }
     }
@@ -418,18 +431,23 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         binding.navigation.setOnClickListener(this)
         binding.openChat.setOnClickListener(this)
         binding.passengersButton.setOnClickListener(this)
+        binding.attandance.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.startTrip -> {
 
+                Logger.d(System.currentTimeMillis().toString() + "\n" + date.toString())
+
+                if (System.currentTimeMillis() > (date.toLong() + 1800000)) {
+                    Toast.makeText(baseActivity, "cant start trip now", Toast.LENGTH_SHORT).show()
+
+                } else if (System.currentTimeMillis() < (date.toLong() - 1800000)) {
+                    Toast.makeText(baseActivity, "cant start trip now", Toast.LENGTH_SHORT).show()
 
 
-
-                if (status) {
-
-
+                } else {
                     val dialogBuilder = android.app.AlertDialog.Builder(baseActivity)
                     // ...Irrelevant code for customizing the buttons and title
                     val inflater = this.layoutInflater
@@ -465,9 +483,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
                     alertDialog.show()
 
-
-                } else {
-                    Toast.makeText(baseActivity, "cant start trip now", Toast.LENGTH_SHORT).show()
 
                 }
 
@@ -475,13 +490,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
             R.id.endTrip -> {
 
-                if (CommonUtilities.distance(
-                        destination?.latitude!!,
-                        destination?.longitude!!,
-                        mLastLocation?.latitude!!,
-                        mLastLocation?.longitude!!
-                    ) < 0.6
-                ) {
+                if ((System.currentTimeMillis() - viewModel.dataManager.startAtTime) > (startAtTime * 60 * 1000) / 2) {
                     val dialogBuilder = android.app.AlertDialog.Builder(baseActivity)
                     // ...Irrelevant code for customizing the buttons and title
                     val inflater = this.layoutInflater
@@ -524,10 +533,10 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
 
                 } else {
-                    Toast.makeText(
-                        baseActivity,
-                        "لم تصل الى وجهتك بعد", Toast.LENGTH_LONG
-                    ).show();
+                    Snackbar.make(view!!, getString(R.string.cant_end), Snackbar.LENGTH_SHORT)
+                        .setBackgroundTint(resources.getColor(R.color.red))
+                        .setAction("Action", null).show();
+
                 }
 
             }
@@ -558,6 +567,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             }
 
             R.id.zoom_route -> {
+
 
                 if (points != null) {
                     val bounds = points?.build()
@@ -732,7 +742,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             if (!t.hasErrors()) {
 
                 Logger.d(t.data().toString())
-
+                model = t.data()?.trip()
 
                 if (t.data()?.trip()?.group_chat() != null)
                     group_chat = t.data()?.trip()?.group_chat()!!
@@ -750,17 +760,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
                 }
 
                 binding?.startsAt.text = startAt
-
-                try {
-
-                    var count = 0
-                    for (model in t.data()?.trip()?.stations()!!) {
-                        count += model.users()?.size!!
-                    }
-
-                    binding?.userCount.text = count.toString()
-                } catch (e: Exception) {
-                }
 
 
                 if (viewModel.dataManager.isTripLive)
@@ -937,7 +936,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
                                 model.latitude(),
                                 model.longitude(),
                                 "123456852",
-                                model.users()!!.size
+                                0
                             )
                         )
                     }
@@ -963,6 +962,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             if (!t.hasErrors()) {
 
                 viewModel.dataManager.saveIsTripLive(true)
+                viewModel.dataManager.saveStartAtTime(System.currentTimeMillis())
                 viewModel.dataManager.saveTripId(t.data()?.startTrip()?.id())
                 viewModel.dataManager.saveLogId(t.data()?.startTrip()?.log_id())
 
@@ -1006,19 +1006,13 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
             if (!t.hasErrors()) {
 
+                viewModel.dataManager.saveStartAtTime(0)
                 viewModel.dataManager.saveIsTripLive(false)
                 viewModel.dataManager.saveTripId(null)
                 viewModel.dataManager.saveLogId(null)
                 viewModel.dataManager?.saveTripType("CAB")
-
                 binding.startTripCardView.visibility = View.VISIBLE
                 binding.bottomSheet.visibility = View.GONE
-
-                baseActivity.onBackPressed()
-
-
-
-
 
                 Handler().post(Runnable {
                     mMap?.setPadding(
@@ -1037,6 +1031,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
                     )
                     mMap?.animateCamera(cu, 200, null)
                 }
+
+
+                val intent = Intent(baseActivity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                baseActivity.finish()
 
 
             } else {
@@ -1133,7 +1133,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
 
         val hashMap: HashMap<String, String> = HashMap<String, String>()
-        hashMap.put(AbstractSpiCall.HEADER_ACCEPT, "application/json")
+        hashMap.put("Accept", "application/json")
         val sb = StringBuilder()
         sb.append("Bearer ")
         sb.append(viewModel.dataManager.getAccessToken())
@@ -1204,14 +1204,17 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             var routes: List<List<HashMap<String, String>>>? = null
             try {
                 jObject = JSONObject(data)
-                Log.d("ParserTask", data)
+
+                parseJson(jObject)
+
+                Log.d("dataParserTask", data)
                 val parser = DataParser()
-                Log.d("ParserTask", parser.toString())
+                Log.d("parserParserTask", parser.toString())
 
                 // Starts parsing data
                 routes = parser.parse(jObject)
                 Log.d("ParserTask", "Executing routes")
-                Log.d("ParserTask", routes.toString())
+                Log.d("routesParserTask", routes.toString())
             } catch (e: java.lang.Exception) {
                 Log.d("ParserTask", e.toString())
                 e.printStackTrace()
@@ -1393,6 +1396,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         // Output format
         val output = "json"
 
+        Logger.d(" LINK " + "https://maps.googleapis.com/maps/api/directions/$output?$parameters")
+
         return "https://maps.googleapis.com/maps/api/directions/$output?$parameters"
     }
 
@@ -1483,4 +1488,116 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         cdd.show()
     }
+
+
+/*
+    @Throws(JSONException::class)
+    private fun test(jsonString: String) {
+        val jSONObject = JSONObject(jsonString)
+        val `object` = JSONTokener(jsonString).nextValue()  as JSONObject
+        val legsJson = `object`.getString("type")
+        val featuresArr = jSONObject.getJSONArray("legs")
+
+        var totalDistance: Long = 0
+        var totalSeconds = 0
+
+        for (i in 0 until featuresArr.length()) {
+
+            totalSeconds = totalSeconds + Integer.parseInt(featuresArr[i].getJSONArray("duration").getString("value"));
+
+
+
+            val anotherjsonObject = featuresArr.getJSONObject(i)
+            //access the fields of that json object
+            val str_type_one = anotherjsonObject.getString("type")
+            val featuresArr_properties = anotherjsonObject.getJSONArray("properties")
+            val propertiesjsonObject = featuresArr_properties.getJSONObject(0)
+            val test = propertiesjsonObject.getString("type")
+        }
+    }*/
+
+    fun parseJson(jObject: JSONObject) {
+        val routes: List<List<HashMap<String, String>>> = ArrayList()
+        val jRoutes: JSONArray
+        var jLegs: JSONArray
+        var jSteps: JSONArray
+        var jDistance: JSONObject? = null
+        var jDuration: JSONObject? = null
+        var totalDistance: Long = 0
+        var totalSeconds = 0
+        try {
+            jRoutes = jObject.getJSONArray("routes")
+
+            /* Traversing all routes */for (i in 0 until jRoutes.length()) {
+                jLegs = (jRoutes.get(i) as JSONObject).getJSONArray("legs")
+
+                /* Traversing all legs */for (j in 0 until jLegs.length()) {
+                    jDistance = (jLegs.get(j) as JSONObject).getJSONObject("distance")
+                    totalDistance = totalDistance + jDistance.getString("value").toLong()
+                    /** Getting duration from the json data  */
+                    jDuration = (jLegs.get(j) as JSONObject).getJSONObject("duration")
+                    totalSeconds = totalSeconds + jDuration.getString("value").toInt()
+                }
+            }
+            val dist = totalDistance / 1000.0
+            Log.d("distance", "Calculated distance:$dist")
+            val days = totalSeconds / 86400
+            val hours = (totalSeconds - days * 86400) / 3600
+            val minutes = (totalSeconds / 60).toInt()
+            val seconds = totalSeconds - days * 86400 - hours * 3600 - minutes * 60
+            Log.d(
+                " duration ",
+                "$minutes"
+            )
+            startAtTime = minutes
+
+            baseActivity.runOnUiThread {
+                binding.totalDistance.text = dist.toString() + " " + getString(R.string.km)
+                binding.totalDuration.text = minutes.toString() + " " + getString(R.string.munites)
+            }
+
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+    }
+
+
+    private fun sendNotification(title: String, messageBody: String) {
+        val intent = Intent(baseActivity, SplashActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntent = PendingIntent.getActivity(
+            baseActivity, 0 /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT
+        )
+
+        val channelId = getString(R.string.default_notification_channel_id)
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationBuilder = NotificationCompat.Builder(baseActivity, channelId)
+            .setSmallIcon(R.drawable.pp)
+            .setContentTitle(title)
+            .setContentText(messageBody)
+            .setAutoCancel(true)
+            .setSound(defaultSoundUri)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager =
+            baseActivity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        notificationManager.notify(
+            System.currentTimeMillis().toInt() /* ID of notification */,
+            notificationBuilder.build()
+        )
+    }
+
 }

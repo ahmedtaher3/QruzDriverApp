@@ -160,7 +160,7 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
                         model.dayName(),
                         model.date().toString(),
                         model.startsAt(),
-                        model.flag(),
+                        true,
                         Partner(
                             model.partner()?.id(),
                             model.partner()?.name(),

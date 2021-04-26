@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
 import com.orhanobut.logger.Logger
@@ -20,6 +21,7 @@ import qruz.t.qruzdriverapp.ui.dialogs.startion.StationDialog
 import java.util.*
 
 class StationsAdapter(
+    private var activity: AppCompatActivity,
     private var stations: ArrayList<Station>,
     private var onStationClick: OnStationClick
 ) : RecyclerView.Adapter<StationsAdapter.StationViewHolder>() {
@@ -55,21 +57,6 @@ class StationsAdapter(
 
         }
 
-        if (model.users == 0)
-        {
-            viewHolder.seats.text =  " No Seats"
-
-        }
-
-        else if (model.users == 0){
-            viewHolder.seats.text = model.users.toString() + " " + "Seats"
-
-        }
-        else
-        {
-            viewHolder.seats.text = model.users.toString() + " " + "Seat"
-
-        }
 
         viewHolder.itemView.setOnClickListener(View.OnClickListener {
             onStationClick.setOnStationClick(model)

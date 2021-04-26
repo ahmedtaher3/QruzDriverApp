@@ -1,11 +1,17 @@
 package qruz.t.qruzdriverapp.ui.dialogs.startion;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,6 +67,7 @@ public class StationDialog extends Dialog implements StationUsersAdapter.OnPhone
     LatLng latLng;
     SearchView searchView;
     StationInterface stationInterface;
+    Boolean sent = false;
 
     public StationDialog(Activity activity, String str, String stationName, String str2, String tripName, LatLng latLng, StationInterface stationInterface) {
         super(activity);
@@ -86,21 +93,29 @@ public class StationDialog extends Dialog implements StationUsersAdapter.OnPhone
         this.DropUsersButton = (Button) findViewById(R.id.DropUsersButton);
         this.stationSendNotification = (Button) findViewById(R.id.stationSendNotification);
         this.stationRecyclerView.setLayoutManager(new LinearLayoutManager(this.c));
-        this.stationAdapter = new StationUsersAdapter(new ArrayList(), this.c , this);
+        this.stationAdapter = new StationUsersAdapter(new ArrayList(), this.c, this);
         this.stationRecyclerView.setAdapter(this.stationAdapter);
         this.pickedUp = new ArrayList();
         this.dropped = new ArrayList();
 
 
-
-        if (stationID==null)
-        {
+        if (stationID == null) {
             stationSendNotification.setVisibility(View.GONE);
         }
         stationSendNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StationDialog.this.sendNotification();
+
+                if (sent)
+                {
+                    Toast.makeText(c, R.string.already_sent, Toast.LENGTH_SHORT).show();
+
+                }
+                else
+                {
+                   sendNotification();
+
+                }
             }
         });
         this.pickUsersButton.setOnClickListener(new View.OnClickListener() {
@@ -153,51 +168,100 @@ public class StationDialog extends Dialog implements StationUsersAdapter.OnPhone
         });
         this.stationDone.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                int i = StationDialog.this.STATUS_INT;
-                if (i == 1) {
 
-                    ArrayList<UserObj> usersObj = new ArrayList<UserObj>();
 
-                    Iterator it = StationDialog.this.stationAdapter.getUsers().iterator();
-                    while (it.hasNext()) {
-                        StationUser stationUser = (StationUser) it.next();
-                        if (stationUser.getIsPickedUp()) {
 
-                            UserObj.Builder model = UserObj.builder();
-                            model.id(stationUser.getId());
-                            model.name(stationUser.getName());
-                            usersObj.add(model.build());
+
+
+
+                android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(c);
+                // ...Irrelevant code for customizing the buttons and title
+                LayoutInflater inflater = c.getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.start_trip_confirm, null);
+                dialogBuilder.setView(dialogView);
+
+                Button cancel = dialogView.findViewById(R.id.cancel);
+                TextView yes = dialogView.findViewById(R.id.yes);
+
+                final AlertDialog alertDialog = dialogBuilder.create();
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        int i = StationDialog.this.STATUS_INT;
+                        if (i == 1) {
+
+                            ArrayList<UserObj> usersObj = new ArrayList<UserObj>();
+
+                            Iterator it = StationDialog.this.stationAdapter.getUsers().iterator();
+                            while (it.hasNext()) {
+                                StationUser stationUser = (StationUser) it.next();
+                                if (stationUser.getIsPickedUp()) {
+
+                                    UserObj.Builder model = UserObj.builder();
+                                    model.id(stationUser.getId());
+                                    model.name(stationUser.getName());
+                                    usersObj.add(model.build());
+                                }
+                            }
+                            if (usersObj.size() != 0) {
+                                StationDialog stationDialog = StationDialog.this;
+                                stationDialog.setPickedUp(usersObj);
+                                return;
+                            }
+                            StationDialog.this.dismiss();
                         }
-                    }
-                    if (usersObj.size() != 0) {
-                        StationDialog stationDialog = StationDialog.this;
-                        stationDialog.setPickedUp(usersObj);
-                        return;
-                    }
-                    StationDialog.this.dismiss();
-                } else if (i == 2) {
+                        else if (i == 2) {
 
-                    ArrayList<UserObj> usersObj = new ArrayList<UserObj>();
+                            ArrayList<UserObj> usersObj = new ArrayList<UserObj>();
 
 
-                    Iterator it2 = StationDialog.this.stationAdapter.getUsers().iterator();
-                    while (it2.hasNext()) {
-                        StationUser stationUser2 = (StationUser) it2.next();
-                        if (stationUser2.getIsPickedUp()) {
+                            Iterator it2 = StationDialog.this.stationAdapter.getUsers().iterator();
+                            while (it2.hasNext()) {
+                                StationUser stationUser2 = (StationUser) it2.next();
+                                if (stationUser2.getIsPickedUp()) {
 
-                            UserObj.Builder model = UserObj.builder();
-                            model.id(stationUser2.getId());
-                            model.name(stationUser2.getName());
-                            usersObj.add(model.build());
+                                    UserObj.Builder model = UserObj.builder();
+                                    model.id(stationUser2.getId());
+                                    model.name(stationUser2.getName());
+                                    usersObj.add(model.build());
+                                }
+                            }
+                            if (usersObj.size() != 0) {
+                                StationDialog stationDialog2 = StationDialog.this;
+                                stationDialog2.setDroppedOff(usersObj);
+                                return;
+                            }
+                            StationDialog.this.dismiss();
                         }
+
                     }
-                    if (usersObj.size() != 0) {
-                        StationDialog stationDialog2 = StationDialog.this;
-                        stationDialog2.setDroppedOff(usersObj);
-                        return;
-                    }
-                    StationDialog.this.dismiss();
-                }
+                });
+
+                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                alertDialog.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
         });
         getUsers(this.STATUS_TEXT);
@@ -216,7 +280,7 @@ public class StationDialog extends Dialog implements StationUsersAdapter.OnPhone
 
                             ArrayList arrayList = new ArrayList();
                             for (BusinessTripSubscriber businessTripSubscriber : ((Data) response.data()).businessTripSubscribers()) {
-                                StationUser stationUser = new StationUser(businessTripSubscriber.id(), businessTripSubscriber.name(), businessTripSubscriber.email(), businessTripSubscriber.phone(), businessTripSubscriber.avatar(), false, businessTripSubscriber.secondary_no());
+                                StationUser stationUser = new StationUser(businessTripSubscriber.id(), businessTripSubscriber.name(), businessTripSubscriber.email(), businessTripSubscriber.phone(), businessTripSubscriber.avatar(), false, businessTripSubscriber.secondary_no(), businessTripSubscriber.station_type());
                                 arrayList.add(stationUser);
                             }
                             StationDialog.this.stationAdapter.setUsers(arrayList);
@@ -280,6 +344,8 @@ public class StationDialog extends Dialog implements StationUsersAdapter.OnPhone
 
     /* access modifiers changed from: 0000 */
     public void sendNotification() {
+
+        CommonUtilities.showStaticDialog(c);
         ApolloClientUtils.INSTANCE.setupApollo(this.dataManager.getAccessToken()).mutate(NearYouMutation.builder()
                 .station_id(this.stationID)
                 .station_name(this.stationName)
@@ -287,13 +353,21 @@ public class StationDialog extends Dialog implements StationUsersAdapter.OnPhone
                 .latitude(String.valueOf(latLng.latitude))
                 .longitude(String.valueOf(latLng.longitude))
                 .log_id(this.dataManager.getLogId())
-                .trip_name(this.stationID)
+                .trip_name(this.tripName)
                 .build()).enqueue(new Callback<NearYouMutation.Data>() {
             public void onResponse(Response<NearYouMutation.Data> response) {
-                Logger.d(response.data());
-                if (response.hasErrors()) {
-                    Logger.d(((Error) response.errors().get(0)).message());
-                }
+
+                sent = true;
+                c.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(c, R.string.notification_sent, Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                CommonUtilities.hideDialog();
+
+
             }
 
             public void onFailure(ApolloException apolloException) {

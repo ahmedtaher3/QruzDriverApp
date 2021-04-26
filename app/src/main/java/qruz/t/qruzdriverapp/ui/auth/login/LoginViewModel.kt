@@ -52,7 +52,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Log.w("MainActivity", "getInstanceId failed", task.exception)
+                    Log.w(" device_id ", "getInstanceId failed", task.exception)
                     return@OnCompleteListener
                     progress.postValue(0)
                 }

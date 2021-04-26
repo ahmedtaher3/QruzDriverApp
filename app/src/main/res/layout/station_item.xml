@@ -64,6 +64,7 @@
             <TextView
                 android:textStyle="bold"
                 android:id="@+id/stationSeatsN"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"

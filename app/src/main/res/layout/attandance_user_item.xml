@@ -83,14 +83,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="Absent" />
+                    android:text="@string/absent" />
 
                 <RadioButton
                     android:id="@+id/present"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="present" />
+                    android:text="@string/present" />
 
             </RadioGroup>
 

@@ -56,6 +56,7 @@ class StationUsersAdapter(
 
         viewHolder.isPickedUp.tag = this
         viewHolder.name.text = model.name
+        viewHolder.station_type.text = model.station_type
 
         if (model.secondary_no.isNullOrEmpty())
         {
@@ -140,6 +141,7 @@ class StationUsersAdapter(
     public class StationViewHolder(private val parent: View) : RecyclerView.ViewHolder(parent) {
 
         public val name: TextView
+        public val station_type: TextView
         public val isPickedUp: CheckBox
         public val station_item_call: RelativeLayout
         public val additional_numbers: RelativeLayout
@@ -148,6 +150,7 @@ class StationUsersAdapter(
 
         init {
             name = parent.findViewById(R.id.station_item_name)
+            station_type = parent.findViewById(R.id.station_type)
             isPickedUp = parent.findViewById(R.id.station_item_picked_up_check_box)
             station_item_call = parent.findViewById(R.id.station_item_call)
             additional_numbers = parent.findViewById(R.id.additional_numbers)

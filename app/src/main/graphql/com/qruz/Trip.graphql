@@ -6,7 +6,6 @@ query  Trip($id: ID!){
         name
         status
         startsAt
-        flag
         group_chat
         driver {
             id
@@ -40,14 +39,7 @@ query  Trip($id: ID!){
             state
             latitude
             longitude
-            state
-            users {
-                id
-                name
-                email
-                phone
-                avatar
-            }
+
         }
     }
 
