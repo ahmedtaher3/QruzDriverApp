@@ -1,0 +1,46 @@
+query  Trip($id: ID!){
+
+    trip(id: $id) {
+        id
+        log_id
+        name
+        status
+        startsAt
+        group_chat
+        driver {
+            id
+            name
+            phone
+            email
+            avatar
+        }
+        partner
+        {
+            id
+            name
+            logo
+        }
+        vehicle {
+            license_plate
+            type {
+                name
+            }
+            make {
+                name
+            }
+            model {
+                name
+            }
+            year
+        }
+        stations {
+            id
+            name
+            state
+            latitude
+            longitude
+
+        }
+    }
+
+}

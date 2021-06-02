@@ -1,0 +1,9 @@
+mutation UpdateSeatsTripBooking ($user_id: ID!){
+    updateSeatsTripBooking(input:{
+        id: $user_id
+        status: "MISSED"
+    }) {
+        id
+    }
+
+}

@@ -1,0 +1,25 @@
+query  SeatTrip($id: ID!){
+    seatsTrip(id: $id) {
+        id
+        log_id
+        name
+        days {
+            saturday
+            sunday
+            monday
+            tuesday
+            wednesday
+            thursday
+            friday
+        }
+        stations {
+            id
+            name
+            state
+            latitude
+            longitude
+            distance
+            duration
+        }
+    }
+}

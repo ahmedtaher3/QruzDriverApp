@@ -1,0 +1,11 @@
+query SeatsTrips($id: ID!,  $day: String!){
+
+
+        driverLiveSeatsTrips(driver_id: 2) {
+            id
+            name
+            log_id
+        }
+
+
+}
