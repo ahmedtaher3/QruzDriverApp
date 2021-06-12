@@ -43,17 +43,20 @@
                 android:padding="10dp">
 
 
-                <TextView
+                  <TextView
+
                     android:id="@+id/one_time_text_view"
                     android:layout_width="wrap_content"
 
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Upcoming"
+                    android:text="@string/upcoming"
 
                     android:textColor="@color/white"
                     android:textSize="15dp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
             </RelativeLayout>
@@ -70,16 +73,18 @@
                 android:padding="10dp">
 
 
-                <TextView
+                  <TextView
+
                     android:id="@+id/daily_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Past"
-
+                    android:text="@string/past"
                     android:textColor="@color/white"
                     android:textSize="15dp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
             </RelativeLayout>
@@ -116,14 +121,17 @@
                     android:layout_height="80dp"
                     android:src="@drawable/empty" />
 
-                <TextView
+                  <TextView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="@string/no_trips_today"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18dp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
             </LinearLayout>
         </RelativeLayout>

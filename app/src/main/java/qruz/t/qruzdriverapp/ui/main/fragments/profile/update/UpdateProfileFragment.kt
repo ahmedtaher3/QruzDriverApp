@@ -254,7 +254,8 @@ class UpdateProfileFragment : BaseFragment<FragmentUpdateProfileBinding>() {
 
         val camera = dialogView.findViewById<LinearLayout>(R.id.camera)
         val gallery = dialogView.findViewById<LinearLayout>(R.id.gallery)
-        val cancel = dialogView.findViewById <TextView>(R.id.cancel)
+        val cancel = dialogView.findViewById   <TextView
+>(R.id.cancel)
 
         val alertDialog = dialogBuilder.create()
 

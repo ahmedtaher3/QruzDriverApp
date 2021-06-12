@@ -279,7 +279,7 @@
     <string name="muted">Muted</string>
     <string name="myRequests">My Requests</string>
     <string name="my_subscriptions">My Subscriptions</string>
-    <string name="my_trips">رحلاتى</string>
+    <string name="my_trips">رحلات بيزنس</string>
     <string name="name">Name</string>
     <string name="nav_app_bar_navigate_up_description">Navigate up</string>
     <string name="nav_app_bar_open_drawer_description">Open navigation drawer</string>
@@ -331,7 +331,7 @@
     <string name="password_validation">Password could not be left empty.</string>
     <string name="password_validation1">Password must contains minimum 8 characters, maximum 16 characters</string>
     <string name="password_validation2">Password must contain atleast 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Character</string>
-    <string name="past">Past</string>
+    <string name="past">الفائتة</string>
     <string name="past_trips">Past Trips</string>
     <string name="pay_now">Pay Now</string>
     <string name="payment">Payments</string>
@@ -486,7 +486,7 @@
     <string name="type">Model</string>
     <string name="type_your_email">Type Your Email</string>
     <string name="unmuted">Unmuted</string>
-    <string name="upcoming">Upcoming</string>
+    <string name="upcoming">القادمة</string>
     <string name="upcoming_rides">Upcoming rides</string>
     <string name="upcoming_trips">Upcoming Trips</string>
     <string name="update">Update</string>
@@ -544,5 +544,8 @@
     <string name="r_u_sre">هل أنت متأكد؟</string>
     <string name="cant_end">لا يمكنك الإنهاء قبل مرور مدة الرحلة</string>
     <string name="default_notification_channel_id">DEFAULT NOTIFICATION CHANNEL ID</string>
+    <string name="seats_trips">رحلات سيت</string>
+    <string name="start_time_at">تبدأ فى :</string>
 
+    <string name="live_now">الحالية</string>
 </resources>

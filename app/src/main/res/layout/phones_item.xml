@@ -30,14 +30,17 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <TextView
+                  <TextView
+
                     android:id="@+id/number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="0123456789"
                     android:textColor="@color/blue_color"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </LinearLayout>
 
 

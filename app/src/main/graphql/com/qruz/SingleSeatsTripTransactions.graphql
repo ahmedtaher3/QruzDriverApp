@@ -1,15 +1,13 @@
-query BusinessTripSubscribers ($trip_id: ID, $station_id: ID, $status: String! ){
+query SingleSeatsTripTransactions ($trip_id: ID!, $trip_time: String! ){
 
-    businessTripSubscribers(trip_id: $trip_id , station_id : $station_id , status :$status) {
-
-        id
-        name
-        email
-        phone
-        avatar
-        is_picked_up
-        secondary_no
-        station_type
+    singleSeatsTripTransactions(trip_id: $trip_id, trip_time:$trip_time) {
+        paid
+        created_by
+        user {
+            id
+            name
+            avatar
+         }
     }
 
 }

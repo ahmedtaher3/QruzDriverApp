@@ -1,9 +1,20 @@
-mutation UpdateSeatsTripBooking ($user_id: ID!){
-    updateSeatsTripBooking(input:{
-        id: $user_id
-        status: "MISSED"
-    }) {
-        id
-    }
+mutation dropSeatsTripUser (
+    $trip_time: String!
+    ,$log_id: String!
+    ,$booking_id: ID!
+    ,$user_id: ID!
+    ,$trip_id: ID!
+    ,$payable: Float!
+    ,$paid: Float!   ){
+    dropSeatsTripUser(input:{
+        trip_time: $trip_time
+        log_id: $log_id
+        booking_id: $booking_id
+        user_id: $user_id
+        trip_id: $trip_id
+        payable: $payable
+        paid: $paid
+    })
+
 
 }

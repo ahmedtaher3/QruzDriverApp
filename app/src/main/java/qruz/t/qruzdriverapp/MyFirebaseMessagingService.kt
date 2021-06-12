@@ -132,7 +132,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         if (dataManager?.user != null) {
             ApolloClientUtils.setupApollo(dataManager?.accessToken)
                 ?.mutate(
-                    UpdateDriverMutation.builder().id(dataManager?.user?.id!!).name(token).build()
+                    UpdateDriverMutation.builder().id(dataManager?.user?.id!!).device_id(token).build()
                 )
                 ?.enqueue(object : ApolloCall.Callback<UpdateDriverMutation.Data>() {
                     override fun onFailure(e: ApolloException) {

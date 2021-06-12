@@ -27,8 +27,11 @@
                 android:paddingTop="20dp"
                 android:paddingBottom="10dp">
 
-                 <TextView
-            android:textStyle="bold"
+                   <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/language"
@@ -44,8 +47,11 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp">
 
-                 <TextView
-            android:textStyle="bold"
+                   <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                     android:id="@+id/changeLang_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -8,8 +8,11 @@
     android:layout_margin="5dp"
     android:background="@drawable/curved_grey">
 
-     <TextView
-            android:textStyle="bold"
+       <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
         android:id="@+id/day_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

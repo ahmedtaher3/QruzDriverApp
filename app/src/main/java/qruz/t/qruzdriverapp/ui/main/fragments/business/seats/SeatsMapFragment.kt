@@ -30,11 +30,12 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
+import com.apollographql.apollo.ApolloCall
+import com.apollographql.apollo.api.Response
+import com.apollographql.apollo.exception.ApolloException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -46,7 +47,9 @@ import com.pusher.client.channel.PrivateChannel
 import com.pusher.client.channel.PrivateChannelEventListener
 import com.pusher.client.channel.PusherEvent
 import com.pusher.client.util.HttpAuthorizer
-import com.qruz.TripQuery
+import com.qruz.NearYouMutation
+import com.qruz.SeatTripQuery
+import com.qruz.data.remote.ApolloClientUtils.setupApollo
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -62,6 +65,7 @@ import qruz.t.qruzdriverapp.Utilities.CommonUtilities
 import qruz.t.qruzdriverapp.Utilities.CommonUtilities.bitmapDescriptorFromVector
 import qruz.t.qruzdriverapp.base.BaseFragment
 import qruz.t.qruzdriverapp.databinding.FragmentMapBinding
+import qruz.t.qruzdriverapp.databinding.FragmentSeatsMapBinding
 import qruz.t.qruzdriverapp.model.Station
 import qruz.t.qruzdriverapp.model.StationUser
 import qruz.t.qruzdriverapp.ui.auth.splach.SplashActivity
@@ -69,7 +73,7 @@ import qruz.t.qruzdriverapp.ui.dialogs.attandance.AttandanceDialog
 import qruz.t.qruzdriverapp.ui.dialogs.chat.ChatDialog
 import qruz.t.qruzdriverapp.ui.dialogs.chat.DirectChatDialog
 import qruz.t.qruzdriverapp.ui.dialogs.startion.PhonesDialog
-import qruz.t.qruzdriverapp.ui.dialogs.startion.StationDialog
+import qruz.t.qruzdriverapp.ui.dialogs.startion.SeatsStationDialog
 import qruz.t.qruzdriverapp.ui.dialogs.startion.StationInterface
 import qruz.t.qruzdriverapp.ui.main.MainActivity
 import java.io.BufferedReader
@@ -83,24 +87,14 @@ import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-
 private const val ARG_START_AT = "startAt"
 private const val ARG_TRIP_ID = "tripId"
 private const val ARG_DATE = "date"
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MapFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-
-
-class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, OnMapReadyCallback,
-    StationsAdapter.OnStationClick, StationInterface {
+class SeatsMapFragment : BaseFragment<FragmentSeatsMapBinding>(), View.OnClickListener,
+    OnMapReadyCallback,
+    StationsSeatsAdapter.OnStationClick, StationInterface {
 
     var startAt = ""
     var tripId = "0"
@@ -113,8 +107,8 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
     var disposable: Disposable? = null
 
 
-    lateinit var binding: FragmentMapBinding
-    private lateinit var viewModel: MapViewModel
+    lateinit var binding: FragmentSeatsMapBinding
+    private lateinit var viewModel: SeatsViewModel
 
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
     private val INTERVAL: Long = 7000
@@ -132,12 +126,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
     var latLngsWayPoints: ArrayList<LatLng>? = null
 
 
-    var adapter: StationsAdapter? = null
+    var adapter: StationsSeatsAdapter? = null
 
 
     var group_chat = false
 
-    var model: TripQuery.Trip? = null
+    var model: SeatTripQuery.SeatsTrip? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,9 +143,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
 
         }
+
+        Logger.d("startAt" + startAt)
+
         latLngs = ArrayList()
         latLngsWayPoints = ArrayList()
-        viewModel = ViewModelProviders.of(this).get(MapViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(SeatsViewModel::class.java)
         mLocationRequest = LocationRequest()
 
         val locationManager =
@@ -216,7 +213,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         }
 
 
-        adapter = StationsAdapter(baseActivity, ArrayList(), this)
+        adapter = StationsSeatsAdapter(baseActivity, ArrayList(), this)
         binding.stations.adapter = adapter
 
 
@@ -281,7 +278,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
     }
 
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -294,7 +290,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(tripId: String, startAt: String, date: Long) =
-            MapFragment().apply {
+            SeatsMapFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_START_AT, startAt)
                     putString(ARG_TRIP_ID, tripId)
@@ -304,7 +300,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
     }
 
     override fun getLayoutId(): Int {
-        return R.layout.fragment_map
+        return R.layout.fragment_seats_map
     }
 
     private fun buildAlertMessageNoGps() {
@@ -401,7 +397,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             if (counter > 420) {
 
                 if (viewModel.dataManager.logId != null && viewModel.dataManager.tripId != null) {
-                    viewModel.updateBusinessTripDriverLocation(
+                    viewModel.updateSeatsTripDriverLocation(
                         location.latitude.toString(),
                         location.longitude.toString()
                     )
@@ -429,16 +425,18 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         binding.myLocation.setOnClickListener(this)
         binding.zoomRoute.setOnClickListener(this)
         binding.navigation.setOnClickListener(this)
-        binding.openChat.setOnClickListener(this)
         binding.passengersButton.setOnClickListener(this)
-        binding.attandance.setOnClickListener(this)
+        binding.details.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.startTrip -> {
 
-                Logger.d(System.currentTimeMillis().toString() + "\n" + date.toString())
+
+
+
+                 Logger.d(System.currentTimeMillis().toString() + "\n" + date.toString())
 
                 if (System.currentTimeMillis() > (date.toLong() + 1800000)) {
                     Toast.makeText(baseActivity, "cant start trip now", Toast.LENGTH_SHORT).show()
@@ -466,12 +464,14 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
                         if (mLastLocation != null) {
                             viewModel.startTrip(
+                                startAt,
                                 tripId.toString(),
                                 mLastLocation?.latitude.toString(),
                                 mLastLocation?.longitude.toString()
                             )
                         } else {
                             viewModel.startTrip(
+                                startAt,
                                 tripId.toString(),
                                 "0.0",
                                 "0.0"
@@ -490,7 +490,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
             R.id.endTrip -> {
 
-                if ((System.currentTimeMillis() - viewModel.dataManager.startAtTime) > (startAtTime * 60 * 1000) / 2) {
+                if (/*(System.currentTimeMillis() - viewModel.dataManager.startAtTime) > (startAtTime * 60 * 1000) / 2*/true) {
                     val dialogBuilder = android.app.AlertDialog.Builder(baseActivity)
                     // ...Irrelevant code for customizing the buttons and title
                     val inflater = this.layoutInflater
@@ -596,30 +596,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
             }
 
-            R.id.attandance -> {
-
-                open_attandance_dialog()
-                /*   val intent = Intent(
-                       Intent.ACTION_VIEW,
-                       Uri.parse(getNavigationUrl(latLngs!!))
-                   )
-                   intent.setClassName(
-                       "com.google.android.apps.maps",
-                       "com.google.android.maps.MapsActivity"
-                   )
-                   startActivity(intent)
-
-                   *//* if (route != null) {
-                    val options = NavigationLauncherOptions.builder()
-                        .directionsRoute(route)
-                        .build()
-
-                    NavigationLauncher.startNavigation(baseActivity, options)
-                }*/
-
-
-            }
-
             R.id.navigation -> {
 
                 val intent = Intent(
@@ -635,32 +611,33 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
             }
 
+            R.id.passengersButton -> {
 
-            R.id.openChat -> {
+                val cdd = SeatsStationDialog(
+                    baseActivity,
+                    null,
+                    "",
+                    viewModel.dataManager.tripId,
+                    binding.name.text.toString(),
+                    LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
+                    this, "DROP_OFF", startAt
+                )
+                cdd.setCanceledOnTouchOutside(true)
+                cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-
-                if (group_chat)
-                    open_chat_dialog()
-                else
-                    Toast.makeText(
-                        baseActivity,
-                        "Chat service not available now",
-                        Toast.LENGTH_LONG
-                    ).show();
-
+                cdd.getWindow()
+                    ?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                cdd.show()
 
             }
 
-            R.id.passengersButton -> {
+            R.id.details -> {
 
-
-                open_station_dialog(
-                    null,
-                    binding.name.text.toString(),
-                    viewModel.dataManager.tripId
-                )
-
-
+                val cdd = TransactionsDialog(baseActivity, startAt)
+                cdd.setCanceledOnTouchOutside(true)
+                cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                cdd.show()
             }
         }
     }
@@ -742,53 +719,36 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             if (!t.hasErrors()) {
 
                 Logger.d(t.data().toString())
-                model = t.data()?.trip()
+                model = t.data()?.seatsTrip()
 
-                if (t.data()?.trip()?.group_chat() != null)
-                    group_chat = t.data()?.trip()?.group_chat()!!
+                try{   startAt = model?.starts_at()!!}
+                catch (e:java.lang.Exception)
+                {}
 
 
-                binding?.name.text = t.data()?.trip()?.name()
+                binding?.name.text = model?.name()
+
+
 
                 try {
+                    binding?.startStation.text = model?.stations()?.get(0)?.name()
                 } catch (e: Exception) {
                 }
 
-                try {
-                    binding?.startStation.text = t.data()?.trip()?.stations()?.get(0)?.name()
-                } catch (e: Exception) {
-                }
-
-                binding?.startsAt.text = startAt
+                binding?.startsAt.text =
+                    CommonUtilities.convertToTime(CommonUtilities.convertToMillis(startAt))
 
 
-                if (viewModel.dataManager.isTripLive)
-                    pusher()
-
-
-
-                viewModel.dataManager.saveTripId(t.data()?.trip()?.id())
-                viewModel.dataManager.saveLogId(t.data()?.trip()?.log_id())
+                viewModel.dataManager.saveTripId(model?.id())
+                viewModel.dataManager.saveLogId(model?.log_id())
                 viewModel.dataManager.saveStartAt(startAt)
 
 
-                try {
-                    //   fragmentMapBinding?.stationStartAt.text = CommonUtilities.convertToTime(t.data()?.trip()?.stations()!![0].shouldBeThereAt()?.toLong()!!)
-
-                } catch (e: java.lang.Exception) {
-
-                }
-                Glide.with(baseActivity).load(t.data()?.trip()?.partner()?.logo()).placeholder(
-                    binding?.logo.drawable
-                )
-                    .into(binding?.logo)
-
-
-                if (!t.data()?.trip()?.stations()?.isEmpty()!!) {
+                if (!model?.stations()?.isEmpty()!!) {
 
                     points = LatLngBounds.Builder()
 
-                    for (model in t.data()?.trip()?.stations()!!) {
+                    for (model in model?.stations()!!) {
 
                         if (model.state().toString() == "PICKABLE") {
                             latLngsWayPoints?.add(
@@ -928,14 +888,14 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
                     binding.stations.layoutManager = LinearLayoutManager(baseActivity)
                     val stations =
                         ArrayList<Station>()
-                    for (model in t.data()?.trip()?.stations()!!) {
+                    for (model in model?.stations()!!) {
                         stations.add(
                             Station(
                                 model.id(),
                                 model.name(),
                                 model.latitude(),
                                 model.longitude(),
-                                "123456852",
+                                (CommonUtilities.convertToMillis(startAt) + (model.duration()!! * 1000)?.toLong()!!).toString(),
                                 0
                             )
                         )
@@ -961,12 +921,12 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
             if (!t.hasErrors()) {
 
+
                 viewModel.dataManager.saveIsTripLive(true)
                 viewModel.dataManager.saveStartAtTime(System.currentTimeMillis())
-                viewModel.dataManager.saveTripId(t.data()?.startTrip()?.id())
-                viewModel.dataManager.saveLogId(t.data()?.startTrip()?.log_id())
+                viewModel.dataManager.saveTripId(t.data()?.startSeatsTrip()?.id())
+                viewModel.dataManager.saveLogId(t.data()?.startSeatsTrip()?.log_id())
 
-                viewModel.dataManager?.saveTripType("business")
 
                 binding.startTripCardView.visibility = View.GONE
                 binding.bottomSheet.visibility = View.VISIBLE
@@ -1046,6 +1006,19 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         })
 
 
+        viewModel?.responseLiveDetails?.observe(viewLifecycleOwner, Observer
+        { t ->
+
+            if (!t.hasErrors()) {
+
+                Logger.d(t.data())
+
+            } else {
+                Logger.d(t.errors()[0].message())
+            }
+
+        })
+
         viewModel?.progress?.observe(viewLifecycleOwner, Observer
         {
 
@@ -1061,6 +1034,21 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
                 1 -> {
                     CommonUtilities.showStaticDialog(baseActivity)
                 }
+                2 -> {
+                    try {
+                        CommonUtilities.hideDialog()
+
+                        Toast.makeText(
+                            baseActivity,
+                            "تم ارسال التنبيه",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    } catch (e: Exception) {
+
+                    }
+
+                }
             }
         })
 
@@ -1070,31 +1058,11 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
         val obj: String? = marker.tag as String?
         Logger.d(marker.snippet + " NAMEEEEE " + obj)
 
-        if (viewModel.dataManager.isTripLive) {
-            open_station_dialog(marker.snippet, obj, null)
-        } else {
-            Toast.makeText(baseActivity, "Trip Not Started Yet", Toast.LENGTH_SHORT).show()
-        }
+
 
         return true
     }
 
-    fun open_station_dialog(stationID: String?, stationName: String?, tripId: String?) {
-        val cdd = StationDialog(
-            baseActivity,
-            stationID,
-            stationName,
-            tripId,
-            binding.name.text.toString(),
-            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
-            this
-        )
-        cdd.setCanceledOnTouchOutside(true)
-        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        cdd.show()
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1147,7 +1115,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
 
         val sb2 = StringBuilder()
-        sb2.append("private-App.BusinessTrip.")
+        sb2.append("private-App.SeatsTrip.")
         sb2.append(viewModel.dataManager.getLogId())
 
         this.ch = pusher.subscribePrivate(sb2.toString())
@@ -1218,7 +1186,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             } catch (e: java.lang.Exception) {
                 Log.d("ParserTask", e.toString())
                 e.printStackTrace()
-                throw RuntimeException(e.message)
+
             }
 
 
@@ -1447,23 +1415,6 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
 
     }
 
-    override fun setOnStationClick(station: Station) {
-        val cdd = StationDialog(
-            baseActivity,
-            station.id,
-            station.name,
-            null,
-            binding.name.text.toString(),
-            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
-            this
-        )
-        com.orhanobut.logger.Logger.d(station.id)
-        cdd.setCanceledOnTouchOutside(true)
-        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        cdd.show()
-    }
 
     override fun openPhonesDialog(stationUser: StationUser) {
         val cdd = PhonesDialog(
@@ -1563,41 +1514,52 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
     }
 
 
-    private fun sendNotification(title: String, messageBody: String) {
-        val intent = Intent(baseActivity, SplashActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(
-            baseActivity, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT
+    override fun setOnArrivedClick(station: Station) {
+
+
+        viewModel.sendNotification(
+            station.id,
+            station.name,
+            binding.name.text.toString(),
+            mLastLocation?.latitude.toString(),
+            mLastLocation?.longitude.toString()
         )
+    }
 
-        val channelId = getString(R.string.default_notification_channel_id)
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(baseActivity, channelId)
-            .setSmallIcon(R.drawable.pp)
-            .setContentTitle(title)
-            .setContentText(messageBody)
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setContentIntent(pendingIntent)
-
-        val notificationManager =
-            baseActivity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        // Since android Oreo notification channel is needed.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        notificationManager.notify(
-            System.currentTimeMillis().toInt() /* ID of notification */,
-            notificationBuilder.build()
+    override fun setOnPickClick(station: Station) {
+        val cdd = SeatsStationDialog(
+            baseActivity,
+            station.id,
+            station.name,
+            viewModel.dataManager.tripId,
+            binding.name.text.toString(),
+            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
+            this, "PICK_UP", startAt
         )
+        com.orhanobut.logger.Logger.d(station.id)
+        cdd.setCanceledOnTouchOutside(true)
+        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        cdd.show()
+    }
+
+    override fun setOnDropClick(station: Station) {
+        val cdd = SeatsStationDialog(
+            baseActivity,
+            station.id,
+            station.name,
+            viewModel.dataManager.tripId,
+            binding.name.text.toString(),
+            LatLng(mLastLocation?.latitude!!, mLastLocation?.longitude!!),
+            this, "DROP_OFF", startAt
+        )
+        com.orhanobut.logger.Logger.d(station.id)
+        cdd.setCanceledOnTouchOutside(true)
+        cdd.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        cdd.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        cdd.show()
     }
 
 }

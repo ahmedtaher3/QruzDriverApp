@@ -1,6 +1,6 @@
-package qruz.t.qruzdriverapp.ui.dialogs.startion
+package qruz.t.qruzdriverapp.ui.main.fragments.business.seats
 
- 
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -18,42 +18,31 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.orhanobut.logger.Logger
+import com.qruz.SingleSeatsTripTransactionsQuery
 import qruz.t.qruzdriverapp.R
 import qruz.t.qruzdriverapp.databinding.StationSeatUserPickItemBinding
+import qruz.t.qruzdriverapp.databinding.TransactionItemBinding
 import qruz.t.qruzdriverapp.model.DriverTrips
 import qruz.t.qruzdriverapp.model.StationSeatUser
 import qruz.t.qruzdriverapp.model.StationUser
 import java.util.*
 
 
-class StationUsersSeatsAdapter(
-    private var users: ArrayList<StationSeatUser>,
-    private var context: Activity,
-    private var onStationUsersClick: OnStationUsersClick
+class TransactionsAdapter(
+    private var users: ArrayList<SingleSeatsTripTransactionsQuery.SingleSeatsTripTransaction>,
+    private var context: Activity
 ) :
-    RecyclerView.Adapter<StationUsersSeatsAdapter.StationViewHolder>() {
+    RecyclerView.Adapter<TransactionsAdapter.StationViewHolder>() {
 
-    private var textStatus = 1
-    private var itemsCopy = ArrayList<StationSeatUser>()
-
-
-
-    interface OnStationUsersClick{
-        fun setOnPhonesClick(model:StationSeatUser)
-        fun setOnConfirmClick(model:StationSeatUser)
-        fun setOnAbsentClick(model:StationSeatUser)
-    }
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
-    ): StationUsersSeatsAdapter.StationViewHolder {
-
-
+    ): TransactionsAdapter.StationViewHolder {
 
 
         return StationViewHolder(
-            StationSeatUserPickItemBinding.inflate(
+            TransactionItemBinding.inflate(
                 LayoutInflater.from(viewGroup.context),
                 viewGroup, false
             )
@@ -61,69 +50,21 @@ class StationUsersSeatsAdapter(
     }
 
     @SuppressLint("MissingPermission")
-    override fun onBindViewHolder(viewHolder: StationViewHolder, i: Int) {
+    override fun onBindViewHolder(hoder: StationViewHolder, i: Int) {
 
         val model = users[i]
 
+        hoder.mBinding?.name?.text = model.user()?.name()
 
-
-
-        viewHolder.mBinding?.name?.text = model.name
-
-
-        viewHolder.mBinding?.call?.setOnClickListener(View.OnClickListener {
-            Toast.makeText(context, "call", Toast.LENGTH_SHORT).show();
-
-
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.CALL_PHONE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        (context as Activity),
-                        Manifest.permission.CALL_PHONE
-                    )
-                ) {
-
-                } else {
-                    ActivityCompat.requestPermissions(
-                        context, arrayOf(Manifest.permission.CALL_PHONE),
-                        1
-                    )
-                }
-            } else {
-                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + model))
-                context.startActivity(intent)
-
-            }
-
-        })
-
-        viewHolder.mBinding?.confirm?.setOnClickListener(View.OnClickListener {
-            Toast.makeText(context, "confirm", Toast.LENGTH_SHORT).show();
-
-            onStationUsersClick.setOnConfirmClick(model)
-        })
-
-        viewHolder.mBinding?.absent?.setOnClickListener(View.OnClickListener {
-            Toast.makeText(context, "absent", Toast.LENGTH_SHORT).show();
-
-            onStationUsersClick.setOnAbsentClick(model)
-
-        })
-
-
+        hoder.mBinding?.confirm?.text ="دفع : " +  model.paid().toString()
     }
 
     override fun getItemCount(): Int {
         return users.size
     }
 
-    fun setUsers(users: ArrayList<StationSeatUser>) {
+    fun setUsers(users: ArrayList<SingleSeatsTripTransactionsQuery.SingleSeatsTripTransaction>) {
         this.users = users
-        this.itemsCopy.addAll(users)
-
         context.runOnUiThread(Runnable {
             notifyDataSetChanged()
         })
@@ -133,17 +74,17 @@ class StationUsersSeatsAdapter(
     }
 
 
-    fun getUsers(): ArrayList<StationSeatUser> {
+    fun getUsers(): ArrayList<SingleSeatsTripTransactionsQuery.SingleSeatsTripTransaction> {
         return this.users
 
     }
 
 
-    inner class StationViewHolder(var binding: StationSeatUserPickItemBinding) :
+    inner class StationViewHolder(var binding: TransactionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
 
-        var mBinding: StationSeatUserPickItemBinding? = null
+        var mBinding: TransactionItemBinding? = null
 
         init {
             this.mBinding = binding;
@@ -154,28 +95,5 @@ class StationUsersSeatsAdapter(
 
     }
 
-
-    fun filter(text: String) {
-        this.users.clear()
-
-
-
-        if (text.isEmpty()) {
-            this.users.addAll(itemsCopy)
-        } else {
-
-
-
-            for (model in itemsCopy) {
-                Logger.d(model.name+"\n" + text)
-                if (model.name?.contains(text, ignoreCase = true)!!) {
-                    users.add(model)
-                }
-
-            }
-
-        }
-        notifyDataSetChanged()
-    }
 
 }

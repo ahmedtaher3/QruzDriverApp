@@ -43,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class CommonUtilities {
@@ -121,6 +122,29 @@ public class CommonUtilities {
 
     public static String convertToDate(long milli) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        String date = fmt.format(milli);
+        return date;
+    }
+
+
+    public static Long convertToMillis(String time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        formatter.setLenient(false);
+
+        Date oldDate = null;
+        try {
+            oldDate = formatter.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long oldMillis = oldDate.getTime();
+
+        return oldMillis;
+    }
+
+
+    public static String convertToDateTime(long milli) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String date = fmt.format(milli);
         return date;
     }

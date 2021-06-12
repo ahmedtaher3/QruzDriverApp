@@ -64,8 +64,10 @@
                     android:text="@string/drop_address"
                     android:textSize="@dimen/_10sdp" />
 
-                 <TextView
-            android:textStyle="bold"
+                  <TextView
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                     android:id="@+id/destination"
 
                     android:layout_width="match_parent"
@@ -436,7 +438,9 @@
                             android:orientation="horizontal">
 
                              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                 android:id="@+id/btn_cancel_ride"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/button_height"
@@ -451,7 +455,9 @@
 
 
                              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                 android:id="@+id/btn_01_status"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/button_height"
@@ -503,7 +509,9 @@
                         android:text="@string/invoice"
                         android:textColor="@color/view"
                         android:textSize="@dimen/_14sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
                     <LinearLayout
@@ -524,7 +532,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="50"
                                 android:text="@string/base_price"
-                                android:textStyle="bold" />
+                                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                             <qruz.t.qruzdriverapp.Utilities.MyTextView
                                 android:id="@+id/txt04BasePrice"
@@ -550,7 +560,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="50"
                                 android:text="@string/distance_price"
-                                android:textStyle="bold" />
+                                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                             <qruz.t.qruzdriverapp.Utilities.MyTextView
                                 android:id="@+id/txt04Distance"
@@ -576,7 +588,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="50"
                                 android:text="@string/tax"
-                                android:textStyle="bold" />
+                                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                             <qruz.t.qruzdriverapp.Utilities.MyTextView
                                 android:id="@+id/txt04Tax"
@@ -601,7 +615,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="50"
                                 android:text="@string/commission"
-                                android:textStyle="bold" />
+                                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                             <qruz.t.qruzdriverapp.Utilities.MyTextView
                                 android:id="@+id/txt04Commision"
@@ -668,7 +684,9 @@
                             android:text="@string/total"
                             android:textColor="@color/view"
                             android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold" />
+                              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                         <qruz.t.qruzdriverapp.Utilities.MyTextView
                             android:id="@+id/txt04Total"
@@ -679,7 +697,9 @@
                             android:text="@string/sample_amt"
                             android:textColor="@color/view"
                             android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold" />
+                              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
                     </LinearLayout>
 
                     <LinearLayout
@@ -696,7 +716,9 @@
                             android:text="@string/amount_to_be_paid"
                             android:textColor="@color/view"
                             android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold" />
+                              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                         <qruz.t.qruzdriverapp.Utilities.MyTextView
                             android:id="@+id/txt04AmountToPaid"
@@ -707,7 +729,9 @@
                             android:text="@string/sample_amt"
                             android:textColor="@color/view"
                             android:textSize="@dimen/text_size_medium"
-                            android:textStyle="bold" />
+                              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
                     </LinearLayout>
 
                     <View
@@ -744,7 +768,9 @@
                 </LinearLayout>
 
                  <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                     android:id="@+id/btn_confirm_payment"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_height"
@@ -791,7 +817,9 @@
                     android:text="@string/rate_your_trips"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_14sdp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -839,7 +867,9 @@
             </LinearLayout>
 
              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/btn_rate_submit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -863,7 +893,9 @@
 
 
              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/btn_go_offline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -936,7 +968,9 @@
                 android:text="@string/timer_start"
                 android:textColor="@color/timer_text_color"
                 android:textSize="@dimen/_16sdp"
-                android:textStyle="bold" />
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -1017,7 +1051,9 @@
                     android:text="@string/pick_up"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_13sdp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                 <qruz.t.qruzdriverapp.Utilities.MyTextView
                     android:id="@+id/txtPickup"
@@ -1036,7 +1072,9 @@
                     android:text="@string/drop_at"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/_13sdp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                 <qruz.t.qruzdriverapp.Utilities.MyTextView
                     android:id="@+id/txtDropAt"
@@ -1058,7 +1096,9 @@
                     android:weightSum="100">
 
                      <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                         android:id="@+id/btn_02_reject"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_height"
@@ -1071,7 +1111,9 @@
                         android:textColor="@color/button_text_color" />
 
                      <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                         android:id="@+id/btn_02_accept"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_height"

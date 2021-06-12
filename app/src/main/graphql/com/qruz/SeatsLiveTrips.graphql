@@ -1,10 +1,11 @@
-query SeatsTrips($id: ID!,  $day: String!){
+query SeatsLiveTrips($id: ID!){
 
 
-        driverLiveSeatsTrips(driver_id: 2) {
+        driverLiveSeatsTrips(driver_id: $id) {
             id
             name
             log_id
+            starts_at
         }
 
 

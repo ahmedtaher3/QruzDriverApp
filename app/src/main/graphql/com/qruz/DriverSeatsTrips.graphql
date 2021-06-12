@@ -1,21 +1,10 @@
-query DriverTrips($id: ID!,  $day: String!){
+query DriverSeatsTrips($id: ID!,  $day: String!){
 
-    driverTrips(driver_id: $id,  day: $day) {
-
-        id
-        name
-        dayName
-        date
-        startsAt
-        isReturn
-        partner
-        {
+        driverSeatsTrips(driver_id: $id, day: $day) {
             id
             name
-            logo
+            starts_at
         }
 
-
-    }
 
 }

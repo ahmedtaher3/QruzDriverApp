@@ -73,7 +73,9 @@
                     android:maxLines="1"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                 <qruz.t.qruzdriverapp.Utilities.MyTextView
                     android:id="@+id/last_name"
@@ -116,7 +118,9 @@
                     android:textAlignment="viewStart"
                     android:text="@string/phone_number"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
                 <qruz.t.qruzdriverapp.Utilities.MyTextView
@@ -154,7 +158,9 @@
                     android:text="@string/email"
                     android:textAlignment="viewStart"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                 <qruz.t.qruzdriverapp.Utilities.MyTextView
                     android:id="@+id/email"
@@ -186,16 +192,24 @@
                             android:layout_marginTop="20dp"
                             android:orientation="vertical">
 
-                                             <TextView
-            android:textStyle="bold"
+                                               <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"
-                                                android:textStyle="bold"
+                                                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                                 android:text="@string/services_requested"
                                                 android:textSize="16sp" />
 
-                                             <TextView
-            android:textStyle="bold"
+                                               <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                                 android:id="@+id/services_provided"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="wrap_content"

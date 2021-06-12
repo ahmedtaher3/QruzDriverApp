@@ -25,14 +25,17 @@
             android:gravity="center"
             android:padding="10dp">
 
-            <TextView
+              <TextView
+
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Name"
                 android:textColor="@color/blue_color"
                 android:textSize="18dp"
-                android:textStyle="bold" />
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
         </LinearLayout>
 

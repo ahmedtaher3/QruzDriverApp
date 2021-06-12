@@ -1,7 +1,7 @@
 package qruz.t.qruzdriverapp.model
 
-class SeatsTrips {
-    private val id: String? = null
-    private val name: String? = null
-    private val startsAt: String? = null
-}
+data class SeatsTrips(
+    val id: String? = null,
+    val name: String? = null,
+    val startsAt: String? = null
+)

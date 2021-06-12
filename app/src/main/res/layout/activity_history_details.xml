@@ -258,7 +258,9 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="5dp"
                         android:textSize="@dimen/_12sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                     <View
                         android:layout_width="match_parent"
@@ -409,7 +411,9 @@
                 android:text="@string/invoice_alone"
                 android:textColor="@color/view"
                 android:textSize="@dimen/_14sdp"
-                android:textStyle="bold" />
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
             <LinearLayout
                 android:id="@+id/lnrBookingID"
@@ -588,7 +592,9 @@
                     android:textColor="@color/view"
                     android:text="@string/total"
                     android:textSize="@dimen/text_size_medium"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                 <qruz.t.qruzdriverapp.Utilities.MyBoldTextView
                     android:id="@+id/txt04Total"
@@ -599,7 +605,9 @@
                     android:text="@string/sample_amt"
                     android:textColor="@color/view"
                     android:textSize="@dimen/text_size_medium"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </LinearLayout>
 
             <LinearLayout
@@ -616,7 +624,9 @@
                     android:textColor="@color/view"
                     android:text="@string/amount_to_be_paid"
                     android:textSize="@dimen/text_size_medium"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                 <qruz.t.qruzdriverapp.Utilities.MyBoldTextView
                     android:id="@+id/txt04AmountToPaid"
@@ -627,7 +637,9 @@
                     android:text="@string/sample_amt"
                     android:textColor="@color/view"
                     android:textSize="@dimen/text_size_medium"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </LinearLayout>
 
             <qruz.t.qruzdriverapp.Utilities.MyButton

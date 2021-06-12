@@ -102,7 +102,9 @@
                             android:paddingEnd="50dp">
 
                              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                 android:id="@+id/signUp"
                                 android:layout_width="match_parent"
                                 android:layout_height="45dp"
@@ -129,8 +131,11 @@
                             android:layout_centerInParent="true"
                             android:orientation="horizontal">
 
-                             <TextView
-            android:textStyle="bold"
+                               <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                                 android:id="@+id/cancel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

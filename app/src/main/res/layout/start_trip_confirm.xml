@@ -17,8 +17,11 @@
             android:layout_height="wrap_content"
             android:src="@drawable/confirm_dialog" />
 
-         <TextView
-            android:textStyle="bold"
+           <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -34,7 +37,9 @@
 
 
              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/cancel"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"
@@ -44,7 +49,9 @@
                 android:textColor="@color/white" />
 
              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/yes"
                 android:layout_width="110dp"
                 android:layout_height="wrap_content"

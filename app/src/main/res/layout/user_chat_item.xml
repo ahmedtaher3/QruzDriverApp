@@ -19,8 +19,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-         <TextView
-            android:textStyle="bold"
+           <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
             android:id="@+id/msg_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,16 +40,22 @@
             android:background="@drawable/message_reciver"
             android:padding="20dp">
 
-             <TextView
-            android:textStyle="bold"
+               <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/msg_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="" />
         </RelativeLayout>
 
-         <TextView
-            android:textStyle="bold"
+           <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
             android:id="@+id/msg_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

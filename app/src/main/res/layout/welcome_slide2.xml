@@ -27,7 +27,9 @@
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
-            android:textStyle="bold" />
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
         <qruz.t.qruzdriverapp.Utilities.MyBoldTextView
             android:layout_width="match_parent"

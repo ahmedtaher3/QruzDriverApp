@@ -19,18 +19,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.orhanobut.logger.Logger
 import qruz.t.qruzdriverapp.R
 import qruz.t.qruzdriverapp.databinding.StationSeatUserPickItemBinding
+import qruz.t.qruzdriverapp.databinding.StationUserSeatsDropItemBinding
 import qruz.t.qruzdriverapp.model.DriverTrips
 import qruz.t.qruzdriverapp.model.StationSeatUser
 import qruz.t.qruzdriverapp.model.StationUser
 import java.util.*
 
 
-class StationUsersSeatsAdapter(
+class StationUsersSeatsDropAdapter(
     private var users: ArrayList<StationSeatUser>,
     private var context: Activity,
     private var onStationUsersClick: OnStationUsersClick
 ) :
-    RecyclerView.Adapter<StationUsersSeatsAdapter.StationViewHolder>() {
+    RecyclerView.Adapter<StationUsersSeatsDropAdapter.StationViewHolder>() {
 
     private var textStatus = 1
     private var itemsCopy = ArrayList<StationSeatUser>()
@@ -38,21 +39,21 @@ class StationUsersSeatsAdapter(
 
 
     interface OnStationUsersClick{
-        fun setOnPhonesClick(model:StationSeatUser)
-        fun setOnConfirmClick(model:StationSeatUser)
-        fun setOnAbsentClick(model:StationSeatUser)
+        fun setOnDropPhonesClick(model:StationSeatUser)
+        fun setOnDropConfirmClick(model:StationSeatUser)
+
     }
 
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
-    ): StationUsersSeatsAdapter.StationViewHolder {
+    ): StationUsersSeatsDropAdapter.StationViewHolder {
 
 
 
 
         return StationViewHolder(
-            StationSeatUserPickItemBinding.inflate(
+            StationUserSeatsDropItemBinding.inflate(
                 LayoutInflater.from(viewGroup.context),
                 viewGroup, false
             )
@@ -65,9 +66,8 @@ class StationUsersSeatsAdapter(
         val model = users[i]
 
 
-
-
         viewHolder.mBinding?.name?.text = model.name
+        viewHolder.mBinding?.bookingID?.text = model.booking_id.toString()
 
 
         viewHolder.mBinding?.call?.setOnClickListener(View.OnClickListener {
@@ -98,13 +98,10 @@ class StationUsersSeatsAdapter(
 
         })
 
-        viewHolder.mBinding?.confirm?.setOnClickListener(View.OnClickListener {
-
+        viewHolder.mBinding?.drop?.setOnClickListener(View.OnClickListener {
+            onStationUsersClick.setOnDropConfirmClick(model)
         })
 
-        viewHolder.mBinding?.absent?.setOnClickListener(View.OnClickListener {
-
-        })
 
 
     }
@@ -132,11 +129,11 @@ class StationUsersSeatsAdapter(
     }
 
 
-    inner class StationViewHolder(var binding: StationSeatUserPickItemBinding) :
+    inner class StationViewHolder(var binding: StationUserSeatsDropItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
 
-        var mBinding: StationSeatUserPickItemBinding? = null
+        var mBinding: StationUserSeatsDropItemBinding? = null
 
         init {
             this.mBinding = binding;
@@ -174,7 +171,7 @@ class StationUsersSeatsAdapter(
 
             for (model in itemsCopy) {
                 Logger.d(model.name+"\n" + text)
-                if (model.name.contains(text, ignoreCase = true)) {
+                if (model.name?.contains(text, ignoreCase = true)!!) {
                     users.add(model)
                 }
 

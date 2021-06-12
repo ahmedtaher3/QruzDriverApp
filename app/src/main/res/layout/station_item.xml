@@ -31,12 +31,15 @@
             android:padding="10dp">
 
 
-            <TextView
+              <TextView
+
                 android:id="@+id/stationName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:textColor="@color/blue_color"
                 android:text="El Mandara" />
 
@@ -50,8 +53,11 @@
             android:orientation="horizontal">
 
 
-            <TextView
-                android:textStyle="bold"
+              <TextView
+
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/stationStartAt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,8 +67,11 @@
                 android:textColor="@color/blue_color" />
 
 
-            <TextView
-                android:textStyle="bold"
+              <TextView
+
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/stationSeatsN"
                 android:visibility="gone"
                 android:layout_width="wrap_content"

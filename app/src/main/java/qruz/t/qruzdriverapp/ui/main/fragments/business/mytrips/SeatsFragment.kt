@@ -3,8 +3,6 @@ package qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips
 
 import android.os.Bundle
 import android.view.View
-import android.widget.SearchView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -14,13 +12,16 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.orhanobut.logger.Logger
 import qruz.t.qruzdriverapp.R
+import qruz.t.qruzdriverapp.Utilities.CommonUtilities
 import qruz.t.qruzdriverapp.base.BaseFragment
 import qruz.t.qruzdriverapp.databinding.FragmentBusinessBinding
 import qruz.t.qruzdriverapp.model.DayTrips
 import qruz.t.qruzdriverapp.model.DriverTrips
 import qruz.t.qruzdriverapp.model.Partner
+import qruz.t.qruzdriverapp.model.SeatsTrips
 import qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips.days.DaysAdapter
 import qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips.days.TripsInterFace
+import qruz.t.qruzdriverapp.ui.main.fragments.business.seats.SeatsMapFragment
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.jvm.internal.Intrinsics
@@ -36,7 +37,8 @@ private const val ARG_PARAM2 = "param2"
  * Use the [BusinessFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace {
+class SeatsFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace ,
+    SeatsAdapter.OnStationClick {
 
     private var param1: String? = null
     private var param2: String? = null
@@ -45,11 +47,11 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
     lateinit var binding: FragmentBusinessBinding
     private lateinit var viewModel: BusinessViewModel
-    private lateinit var businessAdapter: BusinessAdapter
+    private lateinit var adapter: SeatsAdapter
     private lateinit var daysAdapter: DaysAdapter
-    var fullDayList = ArrayList<DriverTrips>()
-    var upcomingList = ArrayList<DriverTrips>()
-    var pastlist = ArrayList<DriverTrips>()
+    var fullDayList = ArrayList<SeatsTrips>()
+    var upcomingList = ArrayList<SeatsTrips>()
+    var pastlist = ArrayList<SeatsTrips>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Mapbox.getInstance(getApplicationContext(), getString(R.string.mapbox_access_token));
@@ -65,12 +67,13 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            BusinessFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+            BusinessFragment()
+                .apply {
+                    arguments = Bundle().apply {
+                        putString(ARG_PARAM1, param1)
+                        putString(ARG_PARAM2, param2)
+                    }
                 }
-            }
     }
 
     override fun getLayoutId(): Int {
@@ -96,7 +99,7 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
 
 
-            businessAdapter.setTrips(pastlist)
+            adapter.setTrips(pastlist)
 
 
             viewDataBinding.upcomingLayout.background =
@@ -116,7 +119,7 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
 
 
-            businessAdapter.setTrips(upcomingList)
+            adapter.setTrips(upcomingList)
 
 
             viewDataBinding.PastLayout.background =
@@ -129,13 +132,13 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
 
 
-        viewModel.getDriverTrips(getTodayName()!!);
+        viewModel.getDriverSeatsTrips(getTodayName()!!);
     }
 
 
     private fun subscribeObservers() {
 
-        viewModel?.responseLive?.observe(viewLifecycleOwner, androidx.lifecycle.Observer { t ->
+        viewModel?.responseSeatsLive?.observe(viewLifecycleOwner, androidx.lifecycle.Observer { t ->
 
 
             fullDayList.clear()
@@ -145,29 +148,16 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
             if (!t.hasErrors()) {
 
 
-                for (model in t.data()?.driverTrips()!!) {
+                for (model in t.data()?.driverSeatsTrips()!!) {
 
 
                     var count = 0
 
-
-
-
                     Logger.d(model.name())
-                    var driverTrips = DriverTrips(
+                    var driverTrips = SeatsTrips(
                         model.id(),
                         model.name(),
-                        model.dayName(),
-                        model.date().toString(),
-                        model.startsAt(),
-                        true,
-                        Partner(
-                            model.partner()?.id(),
-                            model.partner()?.name(),
-                            model.partner()?.logo()
-                        ),
-                        count.toString(),
-                        model.isReturn
+                        model.starts_at()
                     )
                     fullDayList.add(driverTrips)
                 }
@@ -176,7 +166,7 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
                 for (trip in fullDayList) {
 
 
-                    if (trip.date.toLong() + 1800000 > System.currentTimeMillis()) {
+                    if (CommonUtilities.convertToMillis(trip.startsAt) + 1800000 > System.currentTimeMillis()) {
 
                         upcomingList.add(trip)
 
@@ -191,7 +181,7 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
                 else
                     binding.emptyLayout.visibility = View.GONE
 
-                businessAdapter.setTrips(upcomingList)
+                adapter.setTrips(upcomingList)
 
 
             } else {
@@ -201,59 +191,55 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
         })
 
-        viewModel?.responseLiveTrips?.observe(viewLifecycleOwner, androidx.lifecycle.Observer { t ->
-            fullDayList.clear()
-            upcomingList.clear()
-            pastlist.clear()
+        viewModel?.responseSeatsLiveTrips?.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { t ->
+                fullDayList.clear()
+                upcomingList.clear()
+                pastlist.clear()
 
-            if (!t.hasErrors()) {
+                if (!t.hasErrors()) {
 
-
-                for (model in t.data()?.driverLiveBusinessTrips()!!) {
-
-
-                    var count = 0
-
-                    
+                    if (t.data()?.driverLiveSeatsTrips()!!.size>0)
+                    {
 
 
-                    Logger.d(model.name())
-                    var driverTrips = DriverTrips(
-                        model.id(),
-                        model.name(),
-                        model.dayName(),
-                        model.date().toString(),
-                        model.startsAt(),
-                        model.flag(),
-                        Partner(
-                            model.partner()?.id(),
-                            model.partner()?.name(),
-                            model.partner()?.logo()
-                        ),
-                        count.toString(),
-                        model.isReturn
-                    )
+                        viewModel.dataManager.saveIsTripLive(true)
+                        viewModel.dataManager.saveTripId(t.data()?.driverLiveSeatsTrips()?.get(0)?.id())
+                        viewModel.dataManager.saveLogId(t.data()?.driverLiveSeatsTrips()?.get(0)?.log_id())
+
+                    }
+
+                    for (model in t.data()?.driverLiveSeatsTrips()!!) {
+
+
+                        Logger.d(model.name())
+                        var driverTrips = SeatsTrips(
+                            model.id(),
+                            model.name(),
+                            model.starts_at()
+                        )
 
 
 
-                    fullDayList.add(driverTrips)
+                        fullDayList.add(driverTrips)
+                    }
+
+
+                    if (fullDayList.isNullOrEmpty())
+                        binding.emptyLayout.visibility = View.VISIBLE
+                    else
+                        binding.emptyLayout.visibility = View.GONE
+
+                    adapter.setTrips(fullDayList)
+
+
+                } else {
+                    Logger.d(t.errors()[0].message())
+
                 }
 
-
-                if (fullDayList.isNullOrEmpty())
-                    binding.emptyLayout.visibility = View.VISIBLE
-                else
-                    binding.emptyLayout.visibility = View.GONE
-
-                businessAdapter.setTrips(fullDayList)
-
-
-            } else {
-                Logger.d(t.errors()[0].message())
-
-            }
-
-        })
+            })
 
 
 
@@ -273,9 +259,8 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
     private fun initRecyclerView() {
         binding.myTripsRecycler.layoutManager = LinearLayoutManager(baseActivity)
-        businessAdapter =
-            BusinessAdapter(ArrayList(),  initGlide(), baseActivity.supportFragmentManager)
-        binding.myTripsRecycler.adapter = businessAdapter
+        adapter = SeatsAdapter(ArrayList(),baseActivity , this)
+        binding.myTripsRecycler.adapter = adapter
 
 
     }
@@ -320,7 +305,7 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
         }
 
 
-        newList.add(DayTrips("Live Now", "Live Now", false, false, true))
+        newList.add(DayTrips(getString(R.string.live_now), getString(R.string.live_now), false, false, true))
 
 
         for (model in arrayList) {
@@ -371,9 +356,9 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
 
 
 
-        if (str == "Live Now") {
+        if (str == getString(R.string.live_now)) {
             binding.upcomingPastLayout.visibility = View.GONE
-            viewModel.getDriverLiveTrips();
+            viewModel.getDriverSeatsLiveTrips();
         } else {
             if (isToday(str))
                 binding.upcomingPastLayout.visibility = View.VISIBLE
@@ -387,11 +372,31 @@ class BusinessFragment : BaseFragment<FragmentBusinessBinding>(), TripsInterFace
                     ContextCompat.getDrawable(baseActivity, R.drawable.blue_background)
 
             }
-            viewModel.getDriverTrips(str);
+            viewModel.getDriverSeatsTrips(str);
         }
 
-        businessAdapter.setTrips(ArrayList())
+        adapter.setTrips(ArrayList())
 
 
     }
+
+    override fun setOnStationClick(model: SeatsTrips) {
+
+
+
+        baseActivity.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.slide_in_left,
+                    R.anim.slide_out_left,
+                    R.anim.slide_in_left,
+                    R.anim.slide_out_left
+                )
+                .add(
+                    R.id.Main_Container,
+                    SeatsMapFragment.newInstance(model.id.toString(),model.startsAt!!, CommonUtilities.convertToMillis(model.startsAt))
+                )
+                .addToBackStack(tag)
+                .commit()
+        }
+
 }

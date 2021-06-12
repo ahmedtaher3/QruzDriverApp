@@ -100,6 +100,8 @@
         android:text="@string/help_msg"
         android:textColor="@color/colorAccent"
         android:textSize="@dimen/_14sdp"
-        android:textStyle="bold" />
+          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 </RelativeLayout>

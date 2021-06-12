@@ -36,14 +36,17 @@
                     android:layout_marginStart="15dp"
                     android:src="@drawable/circle" />
 
-                 <TextView
+                   <TextView
+
                      android:id="@+id/station_item_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="ahmed taher"
                     android:textColor="@color/blue_color"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </LinearLayout>
 
             <RelativeLayout

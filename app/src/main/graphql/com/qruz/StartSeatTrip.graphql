@@ -1,44 +1,14 @@
-mutation StartTrip ($trip_id: ID! ,$latitude: String!,$longitude: String! ){
-    startTrip(input:{
+mutation StartSeatTrip ($trip_id: ID! ,$trip_time: String! ,$latitude: String!,$longitude: String! ){
+
+    startSeatsTrip(input:{
         trip_id: $trip_id
+        trip_time: $trip_time
         latitude: $latitude
         longitude: $longitude
-    }){
-        id
+    }) {
         log_id
+        id
         name
-        driver {
-            id
-            name
-            phone
-            email
-            avatar
-        }
-        vehicle {
-            license_plate
-            type {
-                name
-            }
-            make {
-                name
-            }
-            model {
-                name
-            }
-            year
-        }
-        stations {
-            id
-            name
-            latitude
-            longitude
-            users {
-                id
-                name
-                email
-                phone
-                avatar
-            }
-        }
     }
+
 }

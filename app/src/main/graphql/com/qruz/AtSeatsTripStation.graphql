@@ -1,4 +1,4 @@
-mutation NearYou (
+mutation AtSeatsTripStation (
     $station_id: ID!,
     $station_name: String!,
     $trip_id: ID!,
@@ -8,14 +8,14 @@ mutation NearYou (
     $longitude: String!
 ){
 
-    nearYou(input:{
-        station_id: $station_id
-        station_name: $station_name
+    atSeatsTripStation(input:{
         trip_id: $trip_id
         trip_name: $trip_name
-        log_id: $log_id
+        station_id: $station_id
+        station_name: $station_name
         latitude: $latitude
         longitude: $longitude
+        log_id: $log_id
     })
 
 }

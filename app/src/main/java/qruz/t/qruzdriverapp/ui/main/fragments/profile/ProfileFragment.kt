@@ -27,24 +27,13 @@ import qruz.t.qruzdriverapp.base.BaseFragment
 import qruz.t.qruzdriverapp.databinding.FragmentProfileBinding
 import qruz.t.qruzdriverapp.ui.auth.login.LoginActivity
 import qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips.BusinessFragment
+import qruz.t.qruzdriverapp.ui.main.fragments.business.mytrips.SeatsFragment
 import qruz.t.qruzdriverapp.ui.main.fragments.profile.changelang.ChangeLanguage
 import qruz.t.qruzdriverapp.ui.main.fragments.profile.changepass.ChangePasswordFragment
 import qruz.t.qruzdriverapp.ui.main.fragments.profile.changepass.RestPasswordFragment
 import qruz.t.qruzdriverapp.ui.main.fragments.profile.update.UpdateProfileFragment
 import java.util.*
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(), View.OnClickListener {
 
     // TODO: Rename and change types of parameters
@@ -59,31 +48,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), View.OnClickList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,6 +66,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), View.OnClickList
         fragmentProfileBinding?.changePass?.setOnClickListener(this)
         fragmentProfileBinding?.changeLang?.setOnClickListener(this)
         fragmentProfileBinding?.updateDriver?.setOnClickListener(this)
+        fragmentProfileBinding?.seatsTrips?.setOnClickListener(this)
 
         fragmentProfileBinding?.driverName?.text = profileViewModel?.dataManager?.user?.name
 
@@ -117,52 +83,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), View.OnClickList
             R.id.log_out -> {
                 profileViewModel?.dataManager?.clear()
                 startActivity(Intent(baseActivity, LoginActivity::class.java))
-                baseActivity.finish()
-
-/*
-                customDialog = CustomDialog(activity)
-                customDialog.setCancelable(false)
-                customDialog.show()
-
-                val param = JSONObject()
-                try {
-                    param.put("service_status", "offline")
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-                val jsonObjectRequest: JsonObjectRequest = object : JsonObjectRequest(
-                    Method.POST,
-                    URLHelper.UPDATE_AVAILABILITY_API,
-                    param,
-                    Response.Listener { response ->
-                        customDialog.dismiss()
-                        if (response != null) {
-
-
-                            profileViewModel?.dataManager?.clear()
-                            startActivity(Intent(baseActivity, LoginActivity::class.java))
-                            baseActivity.finish()
-
-                        }
-                    },
-                    Response.ErrorListener { error ->
-                        customDialog.dismiss()
-                        utils.print("Error", error.toString())
-                        errorHandler(error)
-                    }) {
-                    @Throws(AuthFailureError::class)
-                    override fun getHeaders(): Map<String, String> {
-                        val headers =
-                            HashMap<String, String>()
-                        headers["X-Requested-With"] = "XMLHttpRequest"
-                        headers["Authorization"] = "Bearer $token"
-                        return headers
-                    }
-                }
-                BaseApplication.getInstance().addToRequestQueue(jsonObjectRequest)
-
-*/
-
 
             }
 
@@ -187,6 +107,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(), View.OnClickList
                 replace_fragment(BusinessFragment(), "BusinessFragment")
 
             }
+
+            R.id.seatsTrips -> {
+
+                replace_fragment(SeatsFragment(), "BusinessFragment")
+
+            }
+
             R.id.changeLang -> {
 
                 replace_fragment(ChangeLanguage(), "ChangeLanguage")

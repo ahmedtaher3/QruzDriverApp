@@ -38,7 +38,9 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_height="wrap_content">
          <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
             android:id="@+id/logoutBtn"
             android:layout_margin="@dimen/button_margin"
             android:padding="@dimen/button_padding"

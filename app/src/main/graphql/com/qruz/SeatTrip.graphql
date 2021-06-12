@@ -1,37 +1,17 @@
-query  Trip($id: ID!){
-
-    trip(id: $id) {
+query  SeatTrip($id: ID!){
+    seatsTrip(id: $id) {
         id
         log_id
         name
-        status
-        startsAt
-        group_chat
-        driver {
-            id
-            name
-            phone
-            email
-            avatar
-        }
-        partner
-        {
-            id
-            name
-            logo
-        }
-        vehicle {
-            license_plate
-            type {
-                name
-            }
-            make {
-                name
-            }
-            model {
-                name
-            }
-            year
+        starts_at
+        days {
+            saturday
+            sunday
+            monday
+            tuesday
+            wednesday
+            thursday
+            friday
         }
         stations {
             id
@@ -39,8 +19,8 @@ query  Trip($id: ID!){
             state
             latitude
             longitude
-
+            distance
+            duration
         }
     }
-
 }

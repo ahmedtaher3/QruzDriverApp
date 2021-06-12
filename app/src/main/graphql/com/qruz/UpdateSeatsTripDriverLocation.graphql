@@ -1,10 +1,9 @@
-mutation UpdateBusinessTripDriverLocation ($trip_id: ID! ,$log_id: String! ,$latitude: String! ,$longitude: String!){
+mutation UpdateSeatsTripDriverLocation ($log_id: String! ,$latitude: String! ,$longitude: String!){
 
-      updateBusinessTripDriverLocation(input:{
-        trip_id: $trip_id
+    updateSeatsTripDriverLocation(input:{
         log_id: $log_id
         latitude: $latitude
         longitude: $longitude
-      })
+    })
 
 }

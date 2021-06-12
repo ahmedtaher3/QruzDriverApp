@@ -46,7 +46,9 @@
                 android:gravity="end|center_vertical"
                 android:textColor="@android:color/black"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
         </LinearLayout>
 

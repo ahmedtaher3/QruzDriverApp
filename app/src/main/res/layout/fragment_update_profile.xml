@@ -91,7 +91,9 @@
                 android:textColorHint="@color/edittext_hintColor" />
 
              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

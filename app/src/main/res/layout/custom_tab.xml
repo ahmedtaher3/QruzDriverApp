@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:textSize="@dimen/_12sdp"
-    android:textStyle="bold"
+      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
     android:textColor="@color/black_text_color"/>
 

@@ -33,7 +33,8 @@
                 android:layout_height="40dp"
                 android:src="@drawable/partner" />
 
-            <TextView
+              <TextView
+
                 android:id="@+id/partner_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +43,9 @@
                 android:textColor="@color/blue_color"
                 android:textSize="18dp"
 
-                android:textStyle="bold" />
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
         </LinearLayout>
 
@@ -60,14 +63,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <TextView
+                  <TextView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Start time   :"
                     android:textColor="@color/blue_color"
 
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </RelativeLayout>
 
 
@@ -76,14 +82,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <TextView
+                  <TextView
+
                     android:id="@+id/partner_startsAt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="7:00 AM"
 
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </RelativeLayout>
 
 
@@ -109,14 +118,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <TextView
+                  <TextView
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="Trip Type   :"
                     android:textColor="@color/blue_color"
 
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </RelativeLayout>
 
 
@@ -125,13 +137,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <TextView
+                  <TextView
+
                     android:id="@+id/tripType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
 
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
             </RelativeLayout>
 
 

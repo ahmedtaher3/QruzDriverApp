@@ -23,8 +23,11 @@
         android:background="@drawable/rounded_corner"
         android:orientation="vertical">
 
-         <TextView
-            android:textStyle="bold"
+           <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
              android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -81,7 +84,9 @@
             android:gravity="center">
 
              <Button
-                android:textStyle="bold"
+                  android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
                 android:id="@+id/btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

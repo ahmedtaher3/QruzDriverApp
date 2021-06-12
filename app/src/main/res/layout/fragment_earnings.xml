@@ -54,7 +54,9 @@
             android:text="@string/today_completed"
             android:textColor="@color/black_text_color"
             android:textSize="@dimen/_14sdp"
-            android:textStyle="bold" />
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
         <FrameLayout
@@ -80,7 +82,9 @@
                     android:text="@string/sample_earnings"
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/_17sdp"
-                    android:textStyle="bold" />
+                      android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
 
             </LinearLayout>

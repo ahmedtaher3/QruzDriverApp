@@ -73,7 +73,9 @@
                         android:layout_margin="@dimen/_18sdp"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_19sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                     <RelativeLayout
                         android:layout_width="@dimen/_60sdp"
@@ -119,7 +121,9 @@
                         android:layout_marginStart="@dimen/_18sdp"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_19sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                     <com.daasuu.cat.CountAnimationTextView
                         android:id="@+id/revenue_txt"
@@ -129,7 +133,9 @@
                         android:layout_toEndOf="@id/currency_txt"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_19sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                     <RelativeLayout
                         android:layout_width="@dimen/_60sdp"
@@ -175,7 +181,9 @@
                         android:layout_margin="@dimen/_18sdp"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_19sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                     <RelativeLayout
                         android:layout_width="@dimen/_60sdp"
@@ -220,7 +228,9 @@
                         android:layout_margin="@dimen/_18sdp"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_19sdp"
-                        android:textStyle="bold" />
+                          android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+                 />
 
                     <RelativeLayout
                         android:layout_width="@dimen/_60sdp"

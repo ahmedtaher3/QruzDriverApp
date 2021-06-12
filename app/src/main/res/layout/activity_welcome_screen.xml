@@ -33,8 +33,11 @@
 
         <!-- Skip Button-->
 
-         <TextView
-            android:textStyle="bold"
+           <TextView
+
+              android:textStyle="bold"
+                android:fontFamily="@font/louis_george_cafe_bold"
+
             android:textAllCaps="true"
             android:id="@+id/skip"
             android:layout_width="match_parent"

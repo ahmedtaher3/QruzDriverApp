@@ -1,4 +1,4 @@
-package qruz.t.qruzdriverapp.ui.main.fragments.business.map
+package qruz.t.qruzdriverapp.ui.main.fragments.business.seats
 
 import android.app.Activity
 import android.graphics.Color
@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -20,17 +21,19 @@ import qruz.t.qruzdriverapp.model.Station
 import qruz.t.qruzdriverapp.ui.dialogs.startion.StationDialog
 import java.util.*
 
-class StationsAdapter(
+class StationsSeatsAdapter(
     private var activity: AppCompatActivity,
     private var stations: ArrayList<Station>,
     private var onStationClick: OnStationClick
-) : RecyclerView.Adapter<StationsAdapter.StationViewHolder>() {
+) : RecyclerView.Adapter<StationsSeatsAdapter.StationViewHolder>() {
 
     private var itemsCopy = ArrayList<Station>()
 
 
     interface OnStationClick {
-        fun setOnStationClick(station: Station)
+        fun setOnArrivedClick(station: Station)
+        fun setOnPickClick(station: Station)
+        fun setOnDropClick(station: Station)
 
     }
 
@@ -38,10 +41,10 @@ class StationsAdapter(
     override fun onCreateViewHolder(
         viewGroup: ViewGroup,
         i: Int
-    ): StationsAdapter.StationViewHolder {
+    ): StationsSeatsAdapter.StationViewHolder {
         return StationViewHolder(
             LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.station_item, viewGroup, false)
+                .inflate(R.layout.station_seat_item, viewGroup, false)
         )
     }
 
@@ -58,10 +61,16 @@ class StationsAdapter(
         }
 
 
-        viewHolder.itemView.setOnClickListener(View.OnClickListener {
-            onStationClick.setOnStationClick(model)
+        viewHolder.pick.setOnClickListener(View.OnClickListener {
+            onStationClick.setOnPickClick(model)
+        })
 
+        viewHolder.drop.setOnClickListener(View.OnClickListener {
+            onStationClick.setOnDropClick(model)
+        })
 
+        viewHolder.arrived.setOnClickListener(View.OnClickListener {
+            onStationClick.setOnArrivedClick(model)
         })
     }
 
@@ -89,15 +98,21 @@ class StationsAdapter(
 
     public class StationViewHolder(private val parent: View) : RecyclerView.ViewHolder(parent) {
 
-        public val name: TextView
-        public val seats: TextView
-        public val stationStartAt: TextView
+        val name: TextView
+        val seats: TextView
+        val stationStartAt: TextView
+        val pick: Button
+        val drop: Button
+        val arrived: Button
 
 
         init {
             name = parent.findViewById(R.id.stationName)
             seats = parent.findViewById(R.id.stationSeatsN)
             stationStartAt = parent.findViewById(R.id.stationStartAt)
+            pick = parent.findViewById(R.id.pick)
+            arrived = parent.findViewById(R.id.arrived)
+            drop = parent.findViewById(R.id.drop)
 
         }
 

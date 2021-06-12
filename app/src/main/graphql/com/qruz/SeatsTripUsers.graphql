@@ -1,25 +1,15 @@
-query  SeatTrip($id: ID!){
-    seatsTrip(id: $id) {
+query  SeatsTripUsers($trip_id: ID! , $station_id: ID , $status: String!, $trip_time: String!){
+
+    seatsTripUsers(trip_time: $trip_time , trip_id: $trip_id station_id: $station_id status: $status) {
         id
-        log_id
         name
-        days {
-            saturday
-            sunday
-            monday
-            tuesday
-            wednesday
-            thursday
-            friday
-        }
-        stations {
-            id
-            name
-            state
-            latitude
-            longitude
-            distance
-            duration
-        }
+        phone
+        payable
+        wallet_balance
+        booking_id
+        seats
+        paid
+        boarding_pass
     }
+
 }

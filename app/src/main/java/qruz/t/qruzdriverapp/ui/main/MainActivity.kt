@@ -38,7 +38,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
         activityMainBinding = viewDataBinding
         mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         dataManager = (getApplication() as BaseApplication).dataManager!!
-
+        activityMainBinding?.navView?.setOnNavigationItemSelectedListener(this)
 
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(
@@ -59,76 +59,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
             // Permission has already been granted
 
-            continueProcess()
+            replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
 
         }
 
 
     }
 
-    private fun setObservables() {
-        mainViewModel?.responseLive?.observe(this, Observer { t ->
-            if (!t.hasErrors()) {
 
-                Logger.d(t.data().toString())
-                if (t.data()?.driverLiveTrip()?.status()!!) {
-
-
-                    live = true
-
-                    dataManager?.saveIsTripLive(true)
-                    dataManager?.saveTripId(t.data()?.driverLiveTrip()?.tripID())
-                    dataManager?.saveTripType(t.data()?.driverLiveTrip()?.tripType())
-
-
-
-                    if (t.data()?.driverLiveTrip()?.tripType()?.equals("CAB")!!) {
-                        replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
-                    } else {
-                        replace_fragment(
-                            MapFragment.newInstance(t.data()?.driverLiveTrip()?.tripID().toString(), "started"
-                                      ,  0  ), "BusinessFragment"
-                        )
-                    }
-
-
-                } else {
-                    dataManager?.saveIsTripLive(false)
-                    dataManager?.saveTripId(null)
-                    dataManager?.saveLogId(null)
-                    dataManager?.saveTripType("CAB")
-
-
-                    live = false
-                    replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
-
-
-                }
-            }
-        })
-
-        mainViewModel?.progress?.observe(this, Observer { progress ->
-
-            when (progress) {
-                0 -> {
-                    try {
-                        CommonUtilities.hideDialog()
-
-                    } catch (e: Exception) {
-
-                    }
-                }
-                1 -> {
-                    try {
-                        CommonUtilities.showStaticDialog(this)
-
-                    } catch (e: Exception) {
-
-                    }
-                }
-            }
-        })
-    }
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -140,28 +78,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
 
             R.id.business -> {
-                if (!active.equals("Subecripe")) {
+                if (!active.equals("TempWelcomeFragment")) {
 
-                    if (dataManager?.isTripLive!!) {
-                        if (dataManager?.tripType != null) {
-                            if (dataManager?.tripType.equals("CAB")) {
-                                replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
-                            } else {
-                                replace_fragment(
-                                    MapFragment.newInstance(
-                                          dataManager?.tripId!!, dataManager?.startAt!!
-                                   , 0 ), "BusinessFragment"
-                                )
-                            }
-                        } else {
-                            replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
-                        }
-                    } else {
                         replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
-                    }
 
-
-                    active = "Subecripe"
                 }
 
             }
@@ -170,8 +90,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
 
                 if (!active.equals("ProfileFragment")) {
-                    replace_fragment(ProfileFragment(), "")
-                    active = "ProfileFragment"
+                    replace_fragment(ProfileFragment(), "ProfileFragment")
+
                 } else {
 
                     if (supportFragmentManager.backStackEntryCount > 1) {
@@ -188,6 +108,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
 
 
     private fun replace_fragment(fragment: Fragment, tag: String) {
+        active = tag
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         getSupportFragmentManager()
@@ -228,7 +149,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
-                    continueProcess()
+                    replace_fragment(TempWelcomeFragment(), "TempWelcomeFragment")
 
                 } else {
                     // permission denied, boo! Disable the
@@ -248,10 +169,4 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),
     }
 
 
-    fun continueProcess() {
-        setObservables();
-        activityMainBinding?.navView?.setOnNavigationItemSelectedListener(this)
-        active = "NewRequestFragment"
-        mainViewModel?.checkLiveTrip(mainViewModel?.dataManager?.user?.id!!)
-    }
 }

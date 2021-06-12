@@ -1218,7 +1218,7 @@ class MapFragment : BaseFragment<FragmentMapBinding>(), View.OnClickListener, On
             } catch (e: java.lang.Exception) {
                 Log.d("ParserTask", e.toString())
                 e.printStackTrace()
-                throw RuntimeException(e.message)
+
             }
 
 
